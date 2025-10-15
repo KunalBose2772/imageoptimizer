@@ -1,0 +1,57 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+
+[[redirects]]
+  from = "/image-tools/*"
+  to = "/image-tools/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/pdf-tools/*"
+  to = "/pdf-tools/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/video-tools/*"
+  to = "/video-tools/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/compress-tools/*"
+  to = "/compress-tools/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/ai-tools/*"
+  to = "/ai-tools/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://imageoptimizer.in"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+
+[dev]
+  command = "npm run dev"
+  port = 3000
+  publish = ".next"
