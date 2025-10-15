@@ -308,7 +308,7 @@ const HomePage = () => {
       description="300+ Free Tools for Images, Videos, PDFs, Audio & More. Powered by AI. Convert, compress, and optimize files in seconds."
     >
       {/* Hero Section */}
-      <section className="relative overflow-hidden min-h-screen flex items-center">
+      <section className="relative overflow-hidden min-h-screen flex items-center pt-20 hero-section-mobile">
         {/* Hyperspeed Background */}
         <HyperspeedBackground />
         

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Header from './Header';
 import Footer from './Footer';
+import ScrollToTop from './ScrollToTop';
 import { ThemeProvider } from './ThemeContext';
 
 const Layout = ({ children, title, description, keywords, ogImage, canonical }) => {
@@ -83,6 +84,7 @@ const Layout = ({ children, title, description, keywords, ogImage, canonical }) 
             {children}
           </main>
           <Footer />
+          <ScrollToTop />
         </div>
       </ThemeProvider>
 
