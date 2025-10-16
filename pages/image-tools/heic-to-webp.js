@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../../components/Layout';
 import FileUploader from '../../components/FileUploader';
-import { ConvertButton, DownloadButton } from '../../components/ActionButton';
 import { 
   Image, 
   Download, 
@@ -48,7 +47,7 @@ const HeicToWebpPage = () => {
         // Single file conversion
         const file = selectedFiles[0];
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', file.file);
         formData.append('quality', quality);
 
         const response = await fetch('/api/image/heic-to-webp', {
@@ -62,49 +61,61 @@ const HeicToWebpPage = () => {
 
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
-        const fileName = file.name.replace(/\.(heic|heif)$/i, '.webp');
+        const filename = file.name.replace(/\.(heic|heif)$/i, '.webp');
         
         setConvertedFiles([{
-          name: fileName,
-          url: url,
+          url,
+          filename,
           size: blob.size,
           originalName: file.name
         }]);
-        
+
         toast.success('Conversion completed successfully!');
       } else {
         // Batch conversion
-        const convertedFiles = [];
-        
-        for (let i = 0; i < selectedFiles.length; i++) {
-          const file = selectedFiles[i];
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('quality', quality);
+        const convertedResults = [];
+        let successCount = 0;
+        let errorCount = 0;
 
-          const response = await fetch('/api/image/heic-to-webp', {
-            method: 'POST',
-            body: formData,
-          });
+        for (const file of selectedFiles) {
+          try {
+            const formData = new FormData();
+            formData.append('file', file.file);
+            formData.append('quality', quality);
 
-          if (!response.ok) {
-            throw new Error(`Conversion failed for ${file.name}`);
+            const response = await fetch('/api/image/heic-to-webp', {
+              method: 'POST',
+              body: formData,
+            });
+
+            if (response.ok) {
+              const blob = await response.blob();
+              const url = URL.createObjectURL(blob);
+              const filename = file.name.replace(/\.(heic|heif)$/i, '.webp');
+              
+              convertedResults.push({
+                url,
+                filename,
+                size: blob.size,
+                originalName: file.name
+              });
+              successCount++;
+            } else {
+              errorCount++;
+            }
+          } catch (error) {
+            console.error(`Conversion failed for ${file.name}:`, error);
+            errorCount++;
           }
-
-          const blob = await response.blob();
-          const url = URL.createObjectURL(blob);
-          const fileName = file.name.replace(/\.(heic|heif)$/i, '.webp');
-          
-          convertedFiles.push({
-            name: fileName,
-            url: url,
-            size: blob.size,
-            originalName: file.name
-          });
         }
-        
-        setConvertedFiles(convertedFiles);
-        toast.success(`Successfully converted ${convertedFiles.length} files!`);
+
+        setConvertedFiles(convertedResults);
+
+        if (successCount > 0) {
+          toast.success(`${successCount} files converted successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}`);
+        } else {
+          toast.error('All conversions failed. Please try again.');
+        }
       }
     } catch (error) {
       console.error('Conversion error:', error);
@@ -115,181 +126,160 @@ const HeicToWebpPage = () => {
   };
 
   const handleDownload = (file) => {
-    const link = document.createElement('a');
-    link.href = file.url;
-    link.download = file.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (file) {
+      const link = document.createElement('a');
+      link.href = file.url;
+      link.download = file.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const handleDownloadAll = async () => {
     if (convertedFiles.length === 0) return;
 
     try {
+      // Create a ZIP file with all converted images
       const JSZip = (await import('jszip')).default;
       const zip = new JSZip();
-
-      // Add all converted files to zip
-      for (const file of convertedFiles) {
+      
+      // Add each converted file to the ZIP
+      const filePromises = convertedFiles.map(async (file) => {
         const response = await fetch(file.url);
         const blob = await response.blob();
-        zip.file(file.name, blob);
-      }
+        zip.file(file.filename, blob);
+      });
 
-      // Generate and download zip
+      // Wait for all files to be added
+      await Promise.all(filePromises);
+
+      // Generate and download the ZIP
       const zipBlob = await zip.generateAsync({ type: 'blob' });
-      const url = URL.createObjectURL(zipBlob);
+      const zipUrl = URL.createObjectURL(zipBlob);
+      
       const link = document.createElement('a');
-      link.href = url;
+      link.href = zipUrl;
       link.download = 'imageoptimizer.in.zip';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
       
-      toast.success('All files downloaded as ZIP!');
+      // Clean up the URL
+      URL.revokeObjectURL(zipUrl);
+      
+      toast.success('ZIP file downloaded successfully!');
     } catch (error) {
-      console.error('Download error:', error);
-      toast.error('Failed to create ZIP file');
+      console.error('ZIP creation error:', error);
+      toast.error('Failed to create ZIP file. Please try again.');
     }
   };
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 page-theme-lime">
-        {/* Hero Section */}
-        <section className="relative py-20 lg:py-32 overflow-hidden">
-          <div className="container-custom max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-              {/* Left Content */}
-              <div className="space-y-8">
-                <div className="space-y-6">
-                  <div className="inline-flex items-center space-x-2 bg-lime-100 dark:bg-lime-900/30 text-lime-800 dark:text-lime-200 px-4 py-2 rounded-full text-sm font-medium">
+    <Layout 
+      title="Convert HEIC to WebP Online for Free"
+      description="Convert HEIC images to WebP format instantly. High-quality conversion with customizable quality settings. Free, fast, and secure."
+      keywords="HEIC to WebP, convert HEIC, HEIC converter, image converter, free converter"
+    >
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-lime">
+        {/* Hero Section with Upload */}
+        <section className="section-padding bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+          <div className="container-custom">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                {/* Left Side - Content */}
+                <div className="text-center lg:text-left">
+                  <div className="inline-flex items-center space-x-2 bg-lime-100 dark:bg-lime-900/30 text-lime-700 dark:text-lime-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
                     <Image className="w-4 h-4" />
                     <span>Image Conversion Tool</span>
                   </div>
                   
-                  <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
+                  <h1 className="heading-1 mb-6">
                     Convert{' '}
-                    <span className="bg-gradient-to-r from-lime-500 to-green-500 bg-clip-text text-transparent">
-                      HEIC to WEBP
+                    <span className="bg-gradient-to-r from-lime-500 to-lime-600 bg-clip-text text-transparent">
+                      HEIC to WebP
                     </span>
-                    {' '}Online
+                    {' '}Online for Free
                   </h1>
                   
-                  <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
-                    Transform your HEIC images to modern WEBP format with superior compression and quality. 
-                    Perfect for web optimization and faster loading times.
+                  <p className="text-large mb-8">
+                    Transform your HEIC images to modern WebP format instantly. 
+                    High-quality conversion with superior compression. 
+                    No registration required, completely free.
                   </p>
-                </div>
-
-                {/* Features */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-lime-100 dark:bg-lime-900/30 rounded-lg flex items-center justify-center">
-                      <Zap className="w-5 h-5 text-lime-600 dark:text-lime-400" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">Lightning Fast</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Convert in seconds</div>
-                    </div>
-                  </div>
                   
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-lime-100 dark:bg-lime-900/30 rounded-lg flex items-center justify-center">
-                      <Shield className="w-5 h-5 text-lime-600 dark:text-lime-400" />
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-gray-600 dark:text-gray-400 mb-8">
+                    <div className="flex items-center space-x-2">
+                      <Zap className="w-5 h-5 text-primary-500" />
+                      <span>Lightning Fast</span>
                     </div>
-                    <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">100% Secure</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Files processed locally</div>
+                    <div className="flex items-center space-x-2">
+                      <Shield className="w-5 h-5 text-green-500" />
+                      <span>100% Secure</span>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-lime-100 dark:bg-lime-900/30 rounded-lg flex items-center justify-center">
-                      <Clock className="w-5 h-5 text-lime-600 dark:text-lime-400" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">No Registration</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Start converting now</div>
+                    <div className="flex items-center space-x-2">
+                      <Clock className="w-5 h-5 text-blue-500" />
+                      <span>Processed in Seconds</span>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Right Content - File Uploader */}
-              <div className="lg:sticky lg:top-8">
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
-                  {/* Conversion Mode Selector */}
+                {/* Right Side - Upload Interface */}
+                <div className="glass-morphism-box no-shine rounded-3xl p-8">
+                  <div className="text-center mb-6">
+                    <h2 className="heading-3 mb-2">Upload Your HEIC Files</h2>
+                    <p className="text-gray-600 dark:text-gray-400">Drag & drop or click to browse</p>
+                  </div>
+                  
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                      Conversion Mode
-                    </label>
                     <div className="segmented-control">
-                      <button
-                        type="button"
-                        className={`radio-option ${conversionMode === 'single' ? 'active' : ''}`}
-                        onClick={() => setConversionMode('single')}
-                      >
-                        <span className="radio-custom"></span>
-                        <span className="radio-label">Single File</span>
-                      </button>
-                      <button
-                        type="button"
-                        className={`radio-option ${conversionMode === 'batch' ? 'active' : ''}`}
-                        onClick={() => setConversionMode('batch')}
-                      >
-                        <span className="radio-custom"></span>
-                        <span className="radio-label">Batch Convert</span>
-                      </button>
+                      <label className="segmented-option">
+                        <input
+                          type="radio"
+                          name="conversionMode"
+                          value="single"
+                          checked={conversionMode === 'single'}
+                          onChange={(e) => setConversionMode(e.target.value)}
+                        />
+                        <div className="segmented-button">Single</div>
+                      </label>
+                      <label className="segmented-option">
+                        <input
+                          type="radio"
+                          name="conversionMode"
+                          value="batch"
+                          checked={conversionMode === 'batch'}
+                          onChange={(e) => setConversionMode(e.target.value)}
+                        />
+                        <div className="segmented-button">Batch</div>
+                      </label>
                     </div>
                   </div>
-
-                  {/* Quality Slider */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                      Quality: {quality}%
-                    </label>
-                    <input
-                      type="range"
-                      min="10"
-                      max="100"
-                      value={quality}
-                      onChange={(e) => setQuality(parseInt(e.target.value))}
-                      className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      <span>Lower size</span>
-                      <span>Higher quality</span>
-                    </div>
-                  </div>
-
-                  {/* File Uploader */}
-                  <div className="mb-6">
-                    <FileUploader
-                      onFileSelect={handleFileSelect}
-                      accept=".heic,.heif"
-                      multiple={conversionMode === 'batch'}
-                      maxFiles={conversionMode === 'batch' ? 10 : 1}
-                    />
-                  </div>
-
-                  {/* Selected Files */}
-                  {selectedFiles.length > 0 && (
-                    <div className="mb-6">
-                      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                        Selected Files ({selectedFiles.length})
-                      </h3>
+                  
+                  <FileUploader
+                    onFilesSelected={handleFileSelect}
+                    acceptedFileTypes={['image/heic', 'image/heif']}
+                    maxFiles={conversionMode === 'batch' ? 20 : 1}
+                    maxSize={50 * 1024 * 1024}
+                    multiple={conversionMode === 'batch'}
+                  />
+                  
+                  {selectedFiles && selectedFiles.length > 0 && (
+                    <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                      <div className="flex items-center space-x-2 mb-3">
+                        <CheckCircle className="w-5 h-5 text-green-500" />
+                        <span className="font-medium text-green-700 dark:text-green-300">
+                          {selectedFiles.length} File{selectedFiles.length > 1 ? 's' : ''} Ready for Conversion
+                        </span>
+                      </div>
                       <div className="space-y-2 max-h-32 overflow-y-auto">
                         {selectedFiles.map((file, index) => (
-                          <div key={index} className="flex items-center space-x-3 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                            <Image className="w-4 h-4 text-lime-500" />
-                            <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
+                          <div key={index} className="flex items-center justify-between text-sm">
+                            <span className="text-green-600 dark:text-green-400 truncate">
                               {file.name}
                             </span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              {(file.size / 1024 / 1024).toFixed(1)} MB
+                            <span className="text-green-500 dark:text-green-400 ml-2">
+                              {(file.size / 1024 / 1024).toFixed(2)} MB
                             </span>
                           </div>
                         ))}
@@ -297,63 +287,84 @@ const HeicToWebpPage = () => {
                     </div>
                   )}
 
-                  {/* Convert Button */}
-                  <button
-                    onClick={handleConvert}
-                    disabled={selectedFiles.length === 0 || isConverting}
-                    className="convert-button-lime w-full py-4 px-6 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:scale-105 active:scale-95"
-                  >
-                    {isConverting ? (
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Converting...</span>
+                  {/* Quality Settings */}
+                  {selectedFiles && selectedFiles.length > 0 && (
+                    <div className="mt-6">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        JPEG Quality: {quality}%
+                      </label>
+                      <input
+                        type="range"
+                        min="10"
+                        max="100"
+                        value={quality}
+                        onChange={(e) => setQuality(parseInt(e.target.value))}
+                        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <span>Lower Size</span>
+                        <span>Higher Quality</span>
                       </div>
-                    ) : (
-                      <div className="flex items-center justify-center space-x-2">
-                        <Upload className="w-5 h-5" />
-                        <span>Convert to WEBP</span>
-                      </div>
-                    )}
-                  </button>
+                    </div>
+                  )}
 
-                  {/* Converted Files */}
-                  {convertedFiles.length > 0 && (
-                    <div className="mt-6 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Converted Files ({convertedFiles.length})
-                        </h3>
+                  {/* Convert Button */}
+                  <div className="mt-6">
+                    <button
+                      onClick={handleConvert}
+                      disabled={!selectedFiles || selectedFiles.length === 0 || isConverting}
+                      className="convert-button-lime w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
+                    >
+                      {isConverting ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Converting...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Download className="w-5 h-5" />
+                          <span>Convert to WebP</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Download Results */}
+                  {convertedFiles && convertedFiles.length > 0 && (
+                    <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                          <span className="font-medium text-green-700 dark:text-green-300">
+                            {convertedFiles.length} File{convertedFiles.length > 1 ? 's' : ''} Converted Successfully!
+                          </span>
+                        </div>
                         {convertedFiles.length > 1 && (
                           <button
                             onClick={handleDownloadAll}
-                            className="flex items-center space-x-2 text-lime-600 dark:text-lime-400 hover:text-lime-700 dark:hover:text-lime-300 text-sm font-medium"
+                            className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition-colors"
                           >
-                            <Download className="w-4 h-4" />
-                            <span>Download All</span>
+                            Download ZIP
                           </button>
                         )}
                       </div>
                       
-                      <div className="space-y-2 max-h-40 overflow-y-auto">
+                      <div className="space-y-3 max-h-48 overflow-y-auto">
                         {convertedFiles.map((file, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                            <div className="flex items-center space-x-3">
-                              <CheckCircle className="w-5 h-5 text-green-500" />
-                              <div>
-                                <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                  {file.name}
-                                </div>
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  {(file.size / 1024 / 1024).toFixed(1)} MB
-                                </div>
-                              </div>
+                          <div key={index} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg">
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                {file.filename}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {(file.size / 1024 / 1024).toFixed(2)} MB
+                              </p>
                             </div>
                             <button
                               onClick={() => handleDownload(file)}
-                              className="flex items-center space-x-2 text-lime-600 dark:text-lime-400 hover:text-lime-700 dark:hover:text-lime-300 text-sm font-medium"
+                              className="ml-3 px-3 py-1 bg-primary-500 hover:bg-primary-600 text-white text-sm rounded transition-colors"
                             >
-                              <Download className="w-4 h-4" />
-                              <span>Download</span>
+                              Download
                             </button>
                           </div>
                         ))}
@@ -366,107 +377,176 @@ const HeicToWebpPage = () => {
           </div>
         </section>
 
+
         {/* Features Section */}
-        <section className="py-20 bg-white dark:bg-gray-800">
-          <div className="container-custom max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Why Convert HEIC to WEBP?
-              </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                WEBP format offers superior compression and quality compared to traditional image formats, 
-                making it perfect for modern web applications.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="text-center p-6">
-                <div className="w-16 h-16 bg-lime-100 dark:bg-lime-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-8 h-8 text-lime-600 dark:text-lime-400" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Superior Compression
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  WEBP provides 25-35% better compression than JPEG while maintaining the same quality.
+        <section className="section-padding bg-white dark:bg-gray-800">
+          <div className="container-custom">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="heading-2 mb-4">Why Choose Our HEIC to WebP Converter?</h2>
+                <p className="text-large">
+                  Experience the best HEIC to WebP conversion with our advanced features.
                 </p>
               </div>
-
-              <div className="text-center p-6">
-                <div className="w-16 h-16 bg-lime-100 dark:bg-lime-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-8 h-8 text-lime-600 dark:text-lime-400" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="glass-morphism-box rounded-2xl p-8 text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300">
+                    <Zap className="w-8 h-8 text-white drop-shadow-lg" />
+                  </div>
+                  <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Lightning Fast</h3>
+                  <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
+                    Convert your HEIC files to WebP in seconds with our optimized processing engine.
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Web Optimized
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Perfect for web use with faster loading times and better user experience.
-                </p>
-              </div>
-
-              <div className="text-center p-6">
-                <div className="w-16 h-16 bg-lime-100 dark:bg-lime-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Star className="w-8 h-8 text-lime-600 dark:text-lime-400" />
+                
+                <div className="glass-morphism-box rounded-2xl p-8 text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300">
+                    <Upload className="w-8 h-8 text-white drop-shadow-lg" />
+                  </div>
+                  <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Batch Conversion</h3>
+                  <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
+                    Convert up to 20 HEIC files simultaneously with our batch processing feature.
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Modern Format
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Supported by all modern browsers and recommended by Google for web optimization.
-                </p>
+                
+                <div className="glass-morphism-box rounded-2xl p-8 text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300">
+                    <Shield className="w-8 h-8 text-white drop-shadow-lg" />
+                  </div>
+                  <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">100% Secure</h3>
+                  <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
+                    Your files are automatically deleted after 24 hours. No storage, no tracking.
+                  </p>
+                </div>
+                
+                <div className="glass-morphism-box rounded-2xl p-8 text-center group">
+                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300">
+                    <Star className="w-8 h-8 text-white drop-shadow-lg" />
+                  </div>
+                  <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">High Quality</h3>
+                  <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
+                    Maintain image quality with customizable compression settings and advanced algorithms.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* FAQ Section */}
-        <section className="py-20 bg-gray-50 dark:bg-gray-900">
-          <div className="container-custom max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Frequently Asked Questions
-              </h2>
+        {/* SEO Content Section */}
+        <section className="section-padding bg-gray-50 dark:bg-gray-900">
+          <div className="container-custom">
+            <div className="max-w-7xl mx-auto prose prose-lg dark:prose-invert">
+              <h2 className="heading-2 mb-6">Complete Guide to Converting HEIC to WebP</h2>
+              
+              <p className="text-body mb-6">
+                HEIC (AV1 Image File Format) is a modern image format that offers superior compression 
+                compared to traditional formats like WebP and PNG. However, not all devices and applications 
+                support HEIC files, making WebP conversion essential for broader compatibility.
+              </p>
+
+              <h3 className="heading-3 mb-4">What is HEIC Format?</h3>
+              <p className="text-body mb-6">
+                HEIC is based on the AV1 video codec and provides excellent compression efficiency. 
+                It can reduce file sizes by up to 50% compared to JPEG while maintaining similar visual quality. 
+                However, browser support for HEIC is still limited, making WebP conversion necessary for 
+                universal compatibility.
+              </p>
+
+              <h3 className="heading-3 mb-4">Why Convert HEIC to WebP?</h3>
+              <ul className="list-disc pl-6 mb-6 text-body">
+                <li><strong>Universal Compatibility:</strong> WebP is supported by all devices and browsers</li>
+                <li><strong>Wide Application Support:</strong> Works with all image editing software</li>
+                <li><strong>Social Media Ready:</strong> Most platforms prefer WebP format</li>
+                <li><strong>Print Friendly:</strong> Better support for printing and professional use</li>
+              </ul>
+
+              <h3 className="heading-3 mb-4">How Our HEIC to WebP Converter Works</h3>
+              <p className="text-body mb-6">
+                Our converter uses advanced Sharp and Pillow libraries to ensure high-quality conversion. 
+                The process involves decoding the HEIC file, applying quality optimization, and encoding 
+                to WebP format while preserving maximum visual fidelity. You can convert single files or 
+                batch process up to 20 HEIC files simultaneously for maximum efficiency.
+              </p>
+
+              <h3 className="heading-3 mb-4">Quality Settings Explained</h3>
+              <p className="text-body mb-6">
+                Our tool offers customizable quality settings from 10% to 100%:
+              </p>
+              <ul className="list-disc pl-6 mb-6 text-body">
+                <li><strong>90-100%:</strong> Highest quality, larger file size</li>
+                <li><strong>70-89%:</strong> Good balance of quality and size</li>
+                <li><strong>50-69%:</strong> Moderate compression, smaller files</li>
+                <li><strong>10-49%:</strong> High compression, smallest files</li>
+              </ul>
+
+              <h3 className="heading-3 mb-4">Best Practices</h3>
+              <ul className="list-disc pl-6 mb-6 text-body">
+                <li>Use 85-95% quality for professional images</li>
+                <li>Use 70-80% quality for web images</li>
+                <li>Use 50-70% quality for thumbnails and previews</li>
+                <li>Always keep original files as backup</li>
+              </ul>
             </div>
+          </div>
+        </section>
 
-            <div className="max-w-3xl mx-auto space-y-6">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  What is HEIC format?
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  HEIC (High Efficiency Image Container) is Apple's modern image format used by default 
-                  on iOS devices. It provides better compression than JPEG but has limited compatibility.
-                </p>
-              </div>
+        {/* FAQ Section */}
+        <section className="section-padding bg-white dark:bg-gray-800">
+          <div className="container-custom">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="heading-2 text-center mb-12">Frequently Asked Questions</h2>
+              
+              <div className="space-y-6">
+                <div className="card p-6">
+                  <h3 className="heading-4 mb-3">Is HEIC to WebP conversion free?</h3>
+                  <p className="text-body">
+                    Yes, our HEIC to WebP converter is completely free to use with no hidden costs, 
+                    watermarks, or limitations. You can convert unlimited files without registration.
+                  </p>
+                </div>
 
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Why convert HEIC to WEBP?
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  WEBP offers superior compression and quality compared to traditional formats, 
-                  making it perfect for web use with faster loading times and better user experience.
-                </p>
-              </div>
+                <div className="card p-6">
+                  <h3 className="heading-4 mb-3">What is the maximum file size I can convert?</h3>
+                  <p className="text-body">
+                    You can convert HEIC files up to 50MB in size. For larger files, consider 
+                    compressing them first or contact our support team for assistance.
+                  </p>
+                </div>
 
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Is the conversion secure?
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Yes, all conversions are processed locally in your browser. Your files are never 
-                  uploaded to our servers, ensuring complete privacy and security.
-                </p>
-              </div>
+                <div className="card p-6">
+                  <h3 className="heading-4 mb-3">How long does conversion take?</h3>
+                  <p className="text-body">
+                    Most HEIC to WebP conversions complete in under 3 seconds. Processing time 
+                    depends on file size and current server load.
+                  </p>
+                </div>
 
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  What quality settings should I use?
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  For web use, 80-90% quality provides excellent results. For print or archival purposes, 
-                  use 95-100% quality. Lower quality settings result in smaller file sizes.
-                </p>
+                <div className="card p-6">
+                  <h3 className="heading-4 mb-3">Are my files secure during conversion?</h3>
+                  <p className="text-body">
+                    Absolutely. All uploaded files are automatically deleted from our servers 
+                    within 24 hours. We use enterprise-grade encryption and never store your data.
+                  </p>
+                </div>
+
+                <div className="card p-6">
+                  <h3 className="heading-4 mb-3">What quality setting should I use?</h3>
+                  <p className="text-body">
+                    For most purposes, we recommend 85-90% quality, which provides excellent 
+                    visual quality with reasonable file sizes. Adjust based on your specific needs.
+                  </p>
+                </div>
+
+                <div className="card p-6">
+                  <h3 className="heading-4 mb-3">Can I convert multiple files at once?</h3>
+                  <p className="text-body">
+                    Yes! Our converter supports batch processing of up to 20 HEIC files simultaneously. 
+                    Simply select "Batch" mode, upload multiple files, and convert them all at once. 
+                    Each file is processed individually to ensure optimal quality.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -477,3 +557,4 @@ const HeicToWebpPage = () => {
 };
 
 export default HeicToWebpPage;
+

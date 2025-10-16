@@ -16,10 +16,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: `Method ${req.method} not allowed` });
   }
 
+  console.log('HEIC to WebP conversion request received');
+  
   try {
     // Parse the form data
     const form = formidable({
-      uploadDir: './public/uploads',
+      uploadDir: '/tmp',
       keepExtensions: true,
       maxFileSize: 50 * 1024 * 1024, // 50MB
       filter: ({ mimetype }) => {
@@ -46,52 +48,46 @@ export default async function handler(req, res) {
     const originalName = uploadedFile.originalFilename || 'converted';
     const baseName = path.parse(originalName).name;
     const outputFilename = `${baseName}_converted.webp`;
-    const outputPath = path.join('./public/uploads', outputFilename);
+    const outputPath = `/tmp/${outputFilename}`;
 
-    try {
-      // Convert HEIC to WEBP using Sharp
-      await sharp(uploadedFile.filepath)
-        .webp({ 
-          quality: quality,
-          effort: 6 // Higher effort for better compression
-        })
-        .toFile(outputPath);
+    // Convert HEIC/HEIF to WebP using Sharp
+    await sharp(uploadedFile.filepath)
+      .webp({ 
+        quality: quality,
+        effort: 6 // Higher effort for better compression
+      })
+      .toFile(outputPath);
 
-      // Read the converted file
-      const convertedBuffer = fs.readFileSync(outputPath);
+    // Read the converted file
+    const convertedBuffer = fs.readFileSync(outputPath);
 
-      // Set appropriate headers
-      res.setHeader('Content-Type', 'image/webp');
-      res.setHeader('Content-Disposition', `attachment; filename="${outputFilename}"`);
-      res.setHeader('Content-Length', convertedBuffer.length);
+    // Clean up temporary files
+    fs.unlinkSync(uploadedFile.filepath);
+    fs.unlinkSync(outputPath);
 
-      // Send the converted file
-      res.send(convertedBuffer);
+    // Set response headers
+    res.setHeader('Content-Type', 'image/webp');
+    res.setHeader('Content-Disposition', `attachment; filename="${outputFilename}"`);
+    res.setHeader('Content-Length', convertedBuffer.length);
 
-    } catch (conversionError) {
-      console.error('Conversion error:', conversionError);
-      return res.status(500).json({ error: 'Conversion failed. Please try again.' });
-    } finally {
-      // Clean up files with robust error handling
-      try {
-        if (fs.existsSync(uploadedFile.filepath)) {
-          fs.unlinkSync(uploadedFile.filepath);
-        }
-      } catch (unlinkError) {
-        console.error('Could not delete uploaded file:', unlinkError.message);
-      }
-      
-      try {
-        if (fs.existsSync(outputPath)) {
-          fs.unlinkSync(outputPath);
-        }
-      } catch (unlinkError) {
-        console.error('Could not delete converted file:', unlinkError.message);
-      }
-    }
+    // Send the converted file
+    res.status(200).send(convertedBuffer);
 
   } catch (error) {
-    console.error('API error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Conversion error:', error);
+    
+    // Clean up any temporary files on error
+    try {
+      if (req.files?.file?.[0]?.filepath) {
+        fs.unlinkSync(req.files.file[0].filepath);
+      }
+    } catch (cleanupError) {
+      console.error('Cleanup error:', cleanupError);
+    }
+
+    res.status(500).json({ 
+      error: 'Conversion failed',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 }

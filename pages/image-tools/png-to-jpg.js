@@ -196,7 +196,11 @@ const PngToJpgPage = () => {
                   </div>
                   
                   <h1 className="heading-1 mb-6">
-                    Convert PNG to JPG Online for Free
+                    Convert{' '}
+                    <span className="bg-gradient-to-r from-teal-500 to-teal-600 bg-clip-text text-transparent">
+                      PNG to JPG
+                    </span>
+                    {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">

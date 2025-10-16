@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const AvifToJpgPage = () => {
+const PsdToWebpPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
@@ -51,7 +51,7 @@ const AvifToJpgPage = () => {
         formData.append('file', file.file);
         formData.append('quality', quality);
 
-        const response = await fetch('/api/image/avif-to-jpg', {
+        const response = await fetch('/api/image/psd-to-webp', {
           method: 'POST',
           body: formData,
         });
@@ -62,7 +62,7 @@ const AvifToJpgPage = () => {
 
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
-        const filename = file.name.replace(/\.(avif|heif)$/i, '.jpg');
+        const filename = file.name.replace(/\.(psd)$/i, '.webp');
         
         setConvertedFiles([{
           url,
@@ -84,7 +84,7 @@ const AvifToJpgPage = () => {
             formData.append('file', file.file);
             formData.append('quality', quality);
 
-            const response = await fetch('/api/image/avif-to-jpg', {
+            const response = await fetch('/api/image/psd-to-webp', {
               method: 'POST',
               body: formData,
             });
@@ -92,7 +92,7 @@ const AvifToJpgPage = () => {
             if (response.ok) {
               const blob = await response.blob();
               const url = URL.createObjectURL(blob);
-              const filename = file.name.replace(/\.(avif|heif)$/i, '.jpg');
+              const filename = file.name.replace(/\.(psd)$/i, '.webp');
               
               convertedResults.push({
                 url,
@@ -178,11 +178,11 @@ const AvifToJpgPage = () => {
 
   return (
     <Layout 
-      title="Convert AVIF to JPG Online for Free"
-      description="Convert AVIF images to JPG format instantly. High-quality conversion with customizable quality settings. Free, fast, and secure."
-      keywords="AVIF to JPG, convert AVIF, AVIF converter, image converter, free converter"
+      title="Convert PSD to WebP Online for Free"
+      description="Convert PSD files to WebP format instantly. High-quality conversion with customizable quality settings. Free, fast, and secure."
+      keywords="PSD to WebP, convert PSD, PSD converter, image converter, free converter"
     >
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-blue">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-amber">
         {/* Hero Section with Upload */}
         <section className="section-padding bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
           <div className="container-custom">
@@ -190,21 +190,21 @@ const AvifToJpgPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                 {/* Left Side - Content */}
                 <div className="text-center lg:text-left">
-                  <div className="inline-flex items-center space-x-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                  <div className="inline-flex items-center space-x-2 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
                     <Image className="w-4 h-4" />
                     <span>Image Conversion Tool</span>
                   </div>
                   
                   <h1 className="heading-1 mb-6">
                     Convert{' '}
-                    <span className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-                      AVIF to JPG
+                    <span className="bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                      PSD to WebP
                     </span>
                     {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">
-                    Transform your AVIF images to universal JPG format instantly. 
+                    Transform your PSD files to modern WebP format instantly. 
                     High-quality conversion with customizable quality settings. 
                     No registration required, completely free.
                   </p>
@@ -228,7 +228,7 @@ const AvifToJpgPage = () => {
                 {/* Right Side - Upload Interface */}
                 <div className="glass-morphism-box no-shine rounded-3xl p-8">
                   <div className="text-center mb-6">
-                    <h2 className="heading-3 mb-2">Upload Your AVIF Files</h2>
+                    <h2 className="heading-3 mb-2">Upload Your PSD Files</h2>
                     <p className="text-gray-600 dark:text-gray-400">Drag & drop or click to browse</p>
                   </div>
                   
@@ -259,7 +259,7 @@ const AvifToJpgPage = () => {
                   
                   <FileUploader
                     onFilesSelected={handleFileSelect}
-                    acceptedFileTypes={['image/avif', 'image/heif']}
+                    acceptedFileTypes={['image/vnd.adobe.photoshop', 'application/photoshop']}
                     maxFiles={conversionMode === 'batch' ? 20 : 1}
                     maxSize={50 * 1024 * 1024}
                     multiple={conversionMode === 'batch'}
@@ -314,7 +314,7 @@ const AvifToJpgPage = () => {
                     <button
                       onClick={handleConvert}
                       disabled={!selectedFiles || selectedFiles.length === 0 || isConverting}
-                      className="convert-button-blue w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
+                      className="convert-button-amber w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
                     >
                       {isConverting ? (
                         <>
@@ -324,7 +324,7 @@ const AvifToJpgPage = () => {
                       ) : (
                         <>
                           <Download className="w-5 h-5" />
-                          <span>Convert to JPG</span>
+                          <span>Convert to WebP</span>
                         </>
                       )}
                     </button>
@@ -384,9 +384,9 @@ const AvifToJpgPage = () => {
           <div className="container-custom">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="heading-2 mb-4">Why Choose Our AVIF to JPG Converter?</h2>
+                <h2 className="heading-2 mb-4">Why Choose Our PSD to WebP Converter?</h2>
                 <p className="text-large">
-                  Experience the best AVIF to JPG conversion with our advanced features.
+                  Experience the best PSD to WebP conversion with our advanced features.
                 </p>
               </div>
               
@@ -439,7 +439,7 @@ const AvifToJpgPage = () => {
         <section className="section-padding bg-gray-50 dark:bg-gray-900">
           <div className="container-custom">
             <div className="max-w-7xl mx-auto prose prose-lg dark:prose-invert">
-              <h2 className="heading-2 mb-6">Complete Guide to Converting AVIF to JPG</h2>
+              <h2 className="heading-2 mb-6">Complete Guide to Converting PSD to WebP</h2>
               
               <p className="text-body mb-6">
                 AVIF (AV1 Image File Format) is a modern image format that offers superior compression 
@@ -455,7 +455,7 @@ const AvifToJpgPage = () => {
                 universal compatibility.
               </p>
 
-              <h3 className="heading-3 mb-4">Why Convert AVIF to JPG?</h3>
+              <h3 className="heading-3 mb-4">Why Convert PSD to WebP?</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
                 <li><strong>Universal Compatibility:</strong> JPG is supported by all devices and browsers</li>
                 <li><strong>Wide Application Support:</strong> Works with all image editing software</li>
@@ -463,7 +463,7 @@ const AvifToJpgPage = () => {
                 <li><strong>Print Friendly:</strong> Better support for printing and professional use</li>
               </ul>
 
-              <h3 className="heading-3 mb-4">How Our AVIF to JPG Converter Works</h3>
+              <h3 className="heading-3 mb-4">How Our PSD to WebP Converter Works</h3>
               <p className="text-body mb-6">
                 Our converter uses advanced Sharp and Pillow libraries to ensure high-quality conversion. 
                 The process involves decoding the AVIF file, applying quality optimization, and encoding 
@@ -501,9 +501,9 @@ const AvifToJpgPage = () => {
               
               <div className="space-y-6">
                 <div className="card p-6">
-                  <h3 className="heading-4 mb-3">Is AVIF to JPG conversion free?</h3>
+                  <h3 className="heading-4 mb-3">Is PSD to WebP conversion free?</h3>
                   <p className="text-body">
-                    Yes, our AVIF to JPG converter is completely free to use with no hidden costs, 
+                    Yes, our PSD to WebP converter is completely free to use with no hidden costs, 
                     watermarks, or limitations. You can convert unlimited files without registration.
                   </p>
                 </div>
@@ -511,7 +511,7 @@ const AvifToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">What is the maximum file size I can convert?</h3>
                   <p className="text-body">
-                    You can convert AVIF files up to 50MB in size. For larger files, consider 
+                    You can convert PSD files up to 50MB in size. For larger files, consider 
                     compressing them first or contact our support team for assistance.
                   </p>
                 </div>
@@ -519,7 +519,7 @@ const AvifToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">How long does conversion take?</h3>
                   <p className="text-body">
-                    Most AVIF to JPG conversions complete in under 3 seconds. Processing time 
+                    Most PSD to WebP conversions complete in under 3 seconds. Processing time 
                     depends on file size and current server load.
                   </p>
                 </div>
@@ -557,5 +557,5 @@ const AvifToJpgPage = () => {
   );
 };
 
-export default AvifToJpgPage;
+export default PsdToWebpPage;
 

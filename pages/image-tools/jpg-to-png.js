@@ -193,7 +193,11 @@ const JpgToPngPage = () => {
                   </div>
                   
                   <h1 className="heading-1 mb-6">
-                    Convert JPG to PNG Online for Free
+                    Convert{' '}
+                    <span className="bg-gradient-to-r from-emerald-500 to-emerald-600 bg-clip-text text-transparent">
+                      JPG to PNG
+                    </span>
+                    {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">

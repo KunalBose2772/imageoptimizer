@@ -188,12 +188,100 @@ const Header = () => {
                     <span className="text-sm font-medium text-gray-900 dark:text-white">HEIC to PNG</span>
                   </Link>
                   <Link
+                    href="/image-tools/heif-to-jpg"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">HEIF to JPG</span>
+                  </Link>
+                  <Link
                     href="/image-tools/heic-to-webp"
                     className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Image className="w-4 h-4 text-primary-500" />
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">HEIC to WEBP</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">HEIC to WebP</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/heif-to-png"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">HEIF to PNG</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/psd-to-jpg"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">PSD to JPG</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/psd-to-png"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">PSD to PNG</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/psd-to-webp"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">PSD to WebP</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/svg-to-jpg"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">SVG to JPG</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/svg-to-png"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">SVG to PNG</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/svg-to-webp"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">SVG to WebP</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/svg-to-avif"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">SVG to AVIF</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/tiff-to-jpg"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">TIFF to JPG</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/tiff-to-png"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">TIFF to PNG</span>
                   </Link>
                   <Link
                     href="/pdf-tools/merge-pdf"

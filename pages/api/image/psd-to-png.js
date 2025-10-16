@@ -1,5 +1,6 @@
 import formidable from 'formidable';
 import sharp from 'sharp';
+import PSD from 'psd';
 import fs from 'fs';
 import path from 'path';
 
@@ -16,7 +17,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: `Method ${req.method} not allowed` });
   }
 
-  console.log('AVIF to JPG conversion request received');
+  console.log('PSD to PNG conversion request received');
   
   try {
     // Parse the form data
@@ -25,8 +26,8 @@ export default async function handler(req, res) {
       keepExtensions: true,
       maxFileSize: 50 * 1024 * 1024, // 50MB
       filter: ({ mimetype }) => {
-        // Only allow AVIF and HEIF files
-        return mimetype && (mimetype.includes('image/avif') || mimetype.includes('image/heif'));
+        // Only allow PSD files
+        return mimetype && (mimetype.includes('image/vnd.adobe.photoshop') || mimetype.includes('application/photoshop'));
       },
     });
 
@@ -47,40 +48,28 @@ export default async function handler(req, res) {
     // Generate output filename
     const originalName = uploadedFile.originalFilename || 'converted';
     const baseName = path.parse(originalName).name;
-    const outputFilename = `${baseName}_converted.jpg`;
+    const outputFilename = `${baseName}_converted.png`;
     const outputPath = `/tmp/${outputFilename}`;
 
-    // Convert AVIF/HEIF to JPG using Sharp
-    await sharp(uploadedFile.filepath)
-      .jpeg({ 
-        quality: quality,
-        mozjpeg: true, // Use mozjpeg encoder for better compression
-        progressive: true // Enable progressive JPEG
-      })
-      .toFile(outputPath);
+    // Read and parse PSD file
+    const psd = PSD.fromFile(uploadedFile.filepath);
+    psd.parse();
+    
+    // Convert PSD to PNG buffer
+    const pngBuffer = psd.image.toPng();
+    
+    // Write PNG buffer to file
+    fs.writeFileSync(outputPath, pngBuffer);
 
     // Read the converted file
     const convertedBuffer = fs.readFileSync(outputPath);
 
-    // Clean up temporary files with error handling
-    try {
-      if (fs.existsSync(uploadedFile.filepath)) {
-        fs.unlinkSync(uploadedFile.filepath);
-      }
-    } catch (cleanupError) {
-      console.warn('Could not delete uploaded file:', cleanupError.message);
-    }
-    
-    try {
-      if (fs.existsSync(outputPath)) {
-        fs.unlinkSync(outputPath);
-      }
-    } catch (cleanupError) {
-      console.warn('Could not delete output file:', cleanupError.message);
-    }
+    // Clean up temporary files
+    fs.unlinkSync(uploadedFile.filepath);
+    fs.unlinkSync(outputPath);
 
     // Set response headers
-    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Disposition', `attachment; filename="${outputFilename}"`);
     res.setHeader('Content-Length', convertedBuffer.length);
 

@@ -209,7 +209,11 @@ const JpgToAvifPage = () => {
                   </div>
                   
                   <h1 className="heading-1 mb-6">
-                    Convert JPG to AVIF Online for Free
+                    Convert{' '}
+                    <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+                      JPG to AVIF
+                    </span>
+                    {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">

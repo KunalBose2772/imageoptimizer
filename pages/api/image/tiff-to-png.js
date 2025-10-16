@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: `Method ${req.method} not allowed` });
   }
 
-  console.log('AVIF to JPG conversion request received');
+  console.log('TIFF to PNG conversion request received');
   
   try {
     // Parse the form data
@@ -25,8 +25,8 @@ export default async function handler(req, res) {
       keepExtensions: true,
       maxFileSize: 50 * 1024 * 1024, // 50MB
       filter: ({ mimetype }) => {
-        // Only allow AVIF and HEIF files
-        return mimetype && (mimetype.includes('image/avif') || mimetype.includes('image/heif'));
+        // Only allow TIFF files
+        return mimetype && (mimetype.includes('image/tiff') || mimetype.includes('image/tif'));
       },
     });
 
@@ -47,15 +47,14 @@ export default async function handler(req, res) {
     // Generate output filename
     const originalName = uploadedFile.originalFilename || 'converted';
     const baseName = path.parse(originalName).name;
-    const outputFilename = `${baseName}_converted.jpg`;
-    const outputPath = `/tmp/${outputFilename}`;
+    const outputFilename = `${baseName}_converted.png`;
+    const outputPath = path.join(process.cwd(), 'public', 'uploads', outputFilename);
 
-    // Convert AVIF/HEIF to JPG using Sharp
+    // Convert TIFF to PNG using Sharp
     await sharp(uploadedFile.filepath)
-      .jpeg({ 
-        quality: quality,
-        mozjpeg: true, // Use mozjpeg encoder for better compression
-        progressive: true // Enable progressive JPEG
+      .png({
+        compressionLevel: 6,
+        progressive: true
       })
       .toFile(outputPath);
 
@@ -80,7 +79,7 @@ export default async function handler(req, res) {
     }
 
     // Set response headers
-    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Disposition', `attachment; filename="${outputFilename}"`);
     res.setHeader('Content-Length', convertedBuffer.length);
 

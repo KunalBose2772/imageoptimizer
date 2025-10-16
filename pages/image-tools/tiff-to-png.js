@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const AvifToJpgPage = () => {
+const TiffToPngPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
@@ -51,7 +51,7 @@ const AvifToJpgPage = () => {
         formData.append('file', file.file);
         formData.append('quality', quality);
 
-        const response = await fetch('/api/image/avif-to-jpg', {
+        const response = await fetch('/api/image/tiff-to-png', {
           method: 'POST',
           body: formData,
         });
@@ -62,7 +62,7 @@ const AvifToJpgPage = () => {
 
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
-        const filename = file.name.replace(/\.(avif|heif)$/i, '.jpg');
+        const filename = file.name.replace(/\.(tiff|tif)$/i, '.png');
         
         setConvertedFiles([{
           url,
@@ -84,7 +84,7 @@ const AvifToJpgPage = () => {
             formData.append('file', file.file);
             formData.append('quality', quality);
 
-            const response = await fetch('/api/image/avif-to-jpg', {
+            const response = await fetch('/api/image/tiff-to-png', {
               method: 'POST',
               body: formData,
             });
@@ -92,7 +92,7 @@ const AvifToJpgPage = () => {
             if (response.ok) {
               const blob = await response.blob();
               const url = URL.createObjectURL(blob);
-              const filename = file.name.replace(/\.(avif|heif)$/i, '.jpg');
+              const filename = file.name.replace(/\.(tiff|tif)$/i, '.png');
               
               convertedResults.push({
                 url,
@@ -178,11 +178,11 @@ const AvifToJpgPage = () => {
 
   return (
     <Layout 
-      title="Convert AVIF to JPG Online for Free"
-      description="Convert AVIF images to JPG format instantly. High-quality conversion with customizable quality settings. Free, fast, and secure."
-      keywords="AVIF to JPG, convert AVIF, AVIF converter, image converter, free converter"
+      title="Convert TIFF to PNG Online for Free"
+      description="Convert TIFF images to PNG format instantly. Lossless conversion with transparency support. Free, fast, and secure."
+      keywords="TIFF to PNG, convert TIFF, TIFF converter, image converter, free converter"
     >
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-blue">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-amber">
         {/* Hero Section with Upload */}
         <section className="section-padding bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
           <div className="container-custom">
@@ -190,22 +190,22 @@ const AvifToJpgPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                 {/* Left Side - Content */}
                 <div className="text-center lg:text-left">
-                  <div className="inline-flex items-center space-x-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                  <div className="inline-flex items-center space-x-2 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
                     <Image className="w-4 h-4" />
                     <span>Image Conversion Tool</span>
                   </div>
                   
                   <h1 className="heading-1 mb-6">
                     Convert{' '}
-                    <span className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-                      AVIF to JPG
+                    <span className="bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                      TIFF to PNG
                     </span>
                     {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">
-                    Transform your AVIF images to universal JPG format instantly. 
-                    High-quality conversion with customizable quality settings. 
+                    Transform your TIFF images to universal PNG format instantly. 
+                    Lossless conversion with transparency support. 
                     No registration required, completely free.
                   </p>
                   
@@ -228,7 +228,7 @@ const AvifToJpgPage = () => {
                 {/* Right Side - Upload Interface */}
                 <div className="glass-morphism-box no-shine rounded-3xl p-8">
                   <div className="text-center mb-6">
-                    <h2 className="heading-3 mb-2">Upload Your AVIF Files</h2>
+                    <h2 className="heading-3 mb-2">Upload Your TIFF Files</h2>
                     <p className="text-gray-600 dark:text-gray-400">Drag & drop or click to browse</p>
                   </div>
                   
@@ -259,7 +259,7 @@ const AvifToJpgPage = () => {
                   
                   <FileUploader
                     onFilesSelected={handleFileSelect}
-                    acceptedFileTypes={['image/avif', 'image/heif']}
+                    acceptedFileTypes={['image/tiff', 'image/tif']}
                     maxFiles={conversionMode === 'batch' ? 20 : 1}
                     maxSize={50 * 1024 * 1024}
                     multiple={conversionMode === 'batch'}
@@ -288,33 +288,13 @@ const AvifToJpgPage = () => {
                     </div>
                   )}
 
-                  {/* Quality Settings */}
-                  {selectedFiles && selectedFiles.length > 0 && (
-                    <div className="mt-6">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        JPEG Quality: {quality}%
-                      </label>
-                      <input
-                        type="range"
-                        min="10"
-                        max="100"
-                        value={quality}
-                        onChange={(e) => setQuality(parseInt(e.target.value))}
-                        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                      />
-                      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        <span>Lower Size</span>
-                        <span>Higher Quality</span>
-                      </div>
-                    </div>
-                  )}
 
                   {/* Convert Button */}
                   <div className="mt-6">
                     <button
                       onClick={handleConvert}
                       disabled={!selectedFiles || selectedFiles.length === 0 || isConverting}
-                      className="convert-button-blue w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
+                      className="convert-button-amber w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
                     >
                       {isConverting ? (
                         <>
@@ -324,7 +304,7 @@ const AvifToJpgPage = () => {
                       ) : (
                         <>
                           <Download className="w-5 h-5" />
-                          <span>Convert to JPG</span>
+                          <span>Convert to PNG</span>
                         </>
                       )}
                     </button>
@@ -384,9 +364,9 @@ const AvifToJpgPage = () => {
           <div className="container-custom">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="heading-2 mb-4">Why Choose Our AVIF to JPG Converter?</h2>
+                <h2 className="heading-2 mb-4">Why Choose Our TIFF to PNG Converter?</h2>
                 <p className="text-large">
-                  Experience the best AVIF to JPG conversion with our advanced features.
+                  Experience the best TIFF to PNG conversion with our advanced features.
                 </p>
               </div>
               
@@ -439,55 +419,55 @@ const AvifToJpgPage = () => {
         <section className="section-padding bg-gray-50 dark:bg-gray-900">
           <div className="container-custom">
             <div className="max-w-7xl mx-auto prose prose-lg dark:prose-invert">
-              <h2 className="heading-2 mb-6">Complete Guide to Converting AVIF to JPG</h2>
+              <h2 className="heading-2 mb-6">Complete Guide to Converting TIFF to PNG</h2>
               
               <p className="text-body mb-6">
-                AVIF (AV1 Image File Format) is a modern image format that offers superior compression 
-                compared to traditional formats like JPG and PNG. However, not all devices and applications 
-                support AVIF files, making JPG conversion essential for broader compatibility.
+                TIFF (Tagged Image File Format) is a high-quality image format commonly used in professional 
+                photography and printing. However, TIFF files are often too large for web use and not 
+                supported by all applications, making PNG conversion essential for broader compatibility.
               </p>
 
-              <h3 className="heading-3 mb-4">What is AVIF Format?</h3>
+              <h3 className="heading-3 mb-4">What is TIFF Format?</h3>
               <p className="text-body mb-6">
-                AVIF is based on the AV1 video codec and provides excellent compression efficiency. 
-                It can reduce file sizes by up to 50% compared to JPEG while maintaining similar visual quality. 
-                However, browser support for AVIF is still limited, making JPG conversion necessary for 
-                universal compatibility.
+                TIFF is a flexible, adaptable file format for handling images and data within a single file. 
+                It supports both lossless and lossy compression and can store multiple images in a single file. 
+                However, TIFF files are often very large and not supported by all web browsers, making PNG 
+                conversion necessary for universal compatibility.
               </p>
 
-              <h3 className="heading-3 mb-4">Why Convert AVIF to JPG?</h3>
+              <h3 className="heading-3 mb-4">Why Convert TIFF to PNG?</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li><strong>Universal Compatibility:</strong> JPG is supported by all devices and browsers</li>
-                <li><strong>Wide Application Support:</strong> Works with all image editing software</li>
-                <li><strong>Social Media Ready:</strong> Most platforms prefer JPG format</li>
-                <li><strong>Print Friendly:</strong> Better support for printing and professional use</li>
+                <li><strong>Universal Compatibility:</strong> PNG is supported by all devices and browsers</li>
+                <li><strong>Lossless Quality:</strong> No quality loss during conversion</li>
+                <li><strong>Transparency Support:</strong> Preserves alpha channels and transparency</li>
+                <li><strong>Web Optimized:</strong> Better compression for web use than TIFF</li>
               </ul>
 
-              <h3 className="heading-3 mb-4">How Our AVIF to JPG Converter Works</h3>
+              <h3 className="heading-3 mb-4">How Our TIFF to PNG Converter Works</h3>
               <p className="text-body mb-6">
-                Our converter uses advanced Sharp and Pillow libraries to ensure high-quality conversion. 
-                The process involves decoding the AVIF file, applying quality optimization, and encoding 
-                to JPG format while preserving maximum visual fidelity. You can convert single files or 
-                batch process up to 20 AVIF files simultaneously for maximum efficiency.
+                Our converter uses advanced Sharp library to ensure high-quality conversion. 
+                The process involves decoding the TIFF file and encoding to PNG format while preserving 
+                maximum visual fidelity and transparency. You can convert single files or 
+                batch process up to 20 TIFF files simultaneously for maximum efficiency.
               </p>
 
-              <h3 className="heading-3 mb-4">Quality Settings Explained</h3>
+              <h3 className="heading-3 mb-4">Lossless Conversion</h3>
               <p className="text-body mb-6">
-                Our tool offers customizable quality settings from 10% to 100%:
+                PNG is a lossless format, meaning no quality is lost during conversion:
               </p>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li><strong>90-100%:</strong> Highest quality, larger file size</li>
-                <li><strong>70-89%:</strong> Good balance of quality and size</li>
-                <li><strong>50-69%:</strong> Moderate compression, smaller files</li>
-                <li><strong>10-49%:</strong> High compression, smallest files</li>
+                <li><strong>Perfect Quality:</strong> No compression artifacts or quality loss</li>
+                <li><strong>Transparency Preserved:</strong> Alpha channels and transparency maintained</li>
+                <li><strong>Color Accuracy:</strong> All colors and details preserved exactly</li>
+                <li><strong>Professional Grade:</strong> Suitable for professional and archival use</li>
               </ul>
 
               <h3 className="heading-3 mb-4">Best Practices</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li>Use 85-95% quality for professional images</li>
-                <li>Use 70-80% quality for web images</li>
-                <li>Use 50-70% quality for thumbnails and previews</li>
-                <li>Always keep original files as backup</li>
+                <li>Use PNG for images with transparency or sharp edges</li>
+                <li>Use PNG for logos, graphics, and line art</li>
+                <li>Use PNG for images that need perfect quality preservation</li>
+                <li>Consider file size for web use - PNG can be larger than JPG</li>
               </ul>
             </div>
           </div>
@@ -501,9 +481,9 @@ const AvifToJpgPage = () => {
               
               <div className="space-y-6">
                 <div className="card p-6">
-                  <h3 className="heading-4 mb-3">Is AVIF to JPG conversion free?</h3>
+                  <h3 className="heading-4 mb-3">Is TIFF to PNG conversion free?</h3>
                   <p className="text-body">
-                    Yes, our AVIF to JPG converter is completely free to use with no hidden costs, 
+                    Yes, our TIFF to PNG converter is completely free to use with no hidden costs, 
                     watermarks, or limitations. You can convert unlimited files without registration.
                   </p>
                 </div>
@@ -519,7 +499,7 @@ const AvifToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">How long does conversion take?</h3>
                   <p className="text-body">
-                    Most AVIF to JPG conversions complete in under 3 seconds. Processing time 
+                    Most TIFF to PNG conversions complete in under 3 seconds. Processing time 
                     depends on file size and current server load.
                   </p>
                 </div>
@@ -557,5 +537,5 @@ const AvifToJpgPage = () => {
   );
 };
 
-export default AvifToJpgPage;
+export default TiffToPngPage;
 

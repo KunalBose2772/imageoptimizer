@@ -1,5 +1,6 @@
 import formidable from 'formidable';
 import sharp from 'sharp';
+import svg2img from 'svg2img';
 import fs from 'fs';
 import path from 'path';
 
@@ -16,7 +17,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: `Method ${req.method} not allowed` });
   }
 
-  console.log('AVIF to JPG conversion request received');
+  console.log('SVG to WebP conversion request received');
   
   try {
     // Parse the form data
@@ -25,8 +26,8 @@ export default async function handler(req, res) {
       keepExtensions: true,
       maxFileSize: 50 * 1024 * 1024, // 50MB
       filter: ({ mimetype }) => {
-        // Only allow AVIF and HEIF files
-        return mimetype && (mimetype.includes('image/avif') || mimetype.includes('image/heif'));
+        // Only allow SVG files
+        return mimetype && (mimetype.includes('image/svg+xml') || mimetype.includes('image/svg'));
       },
     });
 
@@ -47,15 +48,29 @@ export default async function handler(req, res) {
     // Generate output filename
     const originalName = uploadedFile.originalFilename || 'converted';
     const baseName = path.parse(originalName).name;
-    const outputFilename = `${baseName}_converted.jpg`;
-    const outputPath = `/tmp/${outputFilename}`;
+    const outputFilename = `${baseName}_converted.webp`;
+    const outputPath = path.join(process.cwd(), 'public', 'uploads', outputFilename);
 
-    // Convert AVIF/HEIF to JPG using Sharp
-    await sharp(uploadedFile.filepath)
-      .jpeg({ 
+    // Read SVG file
+    const svgContent = fs.readFileSync(uploadedFile.filepath, 'utf8');
+    
+    // Convert SVG to PNG using svg2img
+    const pngBuffer = await new Promise((resolve, reject) => {
+      svg2img(svgContent, {
+        width: 2048,
+        height: 2048,
+        preserveAspectRatio: true
+      }, (error, buffer) => {
+        if (error) reject(error);
+        else resolve(buffer);
+      });
+    });
+    
+    // Convert PNG to WebP using Sharp
+    await sharp(pngBuffer)
+      .webp({ 
         quality: quality,
-        mozjpeg: true, // Use mozjpeg encoder for better compression
-        progressive: true // Enable progressive JPEG
+        effort: 6 // Higher effort for better compression
       })
       .toFile(outputPath);
 
@@ -80,7 +95,7 @@ export default async function handler(req, res) {
     }
 
     // Set response headers
-    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader('Content-Type', 'image/webp');
     res.setHeader('Content-Disposition', `attachment; filename="${outputFilename}"`);
     res.setHeader('Content-Length', convertedBuffer.length);
 
@@ -92,11 +107,11 @@ export default async function handler(req, res) {
     
     // Clean up any temporary files on error
     try {
-      if (req.files?.file?.[0]?.filepath) {
+      if (req.files?.file?.[0]?.filepath && fs.existsSync(req.files.file[0].filepath)) {
         fs.unlinkSync(req.files.file[0].filepath);
       }
     } catch (cleanupError) {
-      console.error('Cleanup error:', cleanupError);
+      console.warn('Cleanup error:', cleanupError.message);
     }
 
     res.status(500).json({ 

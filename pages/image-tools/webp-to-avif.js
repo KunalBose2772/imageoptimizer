@@ -196,7 +196,11 @@ const WebpToAvifPage = () => {
                   </div>
                   
                   <h1 className="heading-1 mb-6">
-                    Convert WEBP to AVIF Online for Free
+                    Convert{' '}
+                    <span className="bg-gradient-to-r from-cyan-500 to-cyan-600 bg-clip-text text-transparent">
+                      WEBP to AVIF
+                    </span>
+                    {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">

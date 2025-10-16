@@ -20,10 +20,187 @@ This document provides a **strict template** for creating new converter pages th
 
 ## 📋 Step-by-Step Creation Process
 
-### Step 1: Copy Base Template
-**Always start by copying `pages/image-tools/avif-to-jpg.js` as your base template.**
+### Step 1: Copy Base Template (CRITICAL - DO NOT SKIP)
+**ALWAYS start by copying the base template file using terminal command:**
 
-### Step 2: Update Imports (Keep Exactly the Same)
+```bash
+# Copy the base template file
+copy pages\image-tools\avif-to-jpg.js pages\image-tools\[new-converter-name].js
+
+# Example:
+copy pages\image-tools\avif-to-jpg.js pages\image-tools\heif-to-jpg.js
+```
+
+**⚠️ NEVER create from scratch - ALWAYS copy the working template first!**
+
+### Step 2: Update Component Name and Function (EXACT REPLACEMENTS ONLY)
+**Replace these EXACT strings:**
+
+```javascript
+// Replace this:
+const AvifToJpgPage = () => {
+
+// With this:
+const [NewConverterName]Page = () => {
+
+// Example:
+const HeifToJpgPage = () => {
+```
+
+### Step 3: Update API Endpoints (EXACT REPLACEMENTS ONLY)
+**Replace these EXACT strings:**
+
+```javascript
+// Replace this:
+const response = await fetch('/api/image/avif-to-jpg', {
+
+// With this (replace ALL occurrences):
+const response = await fetch('/api/image/[new-converter-name]', {
+
+// Example:
+const response = await fetch('/api/image/heif-to-jpg', {
+```
+
+### Step 4: Update File Extensions (EXACT REPLACEMENTS ONLY)
+**Replace these EXACT strings:**
+
+```javascript
+// Replace this:
+const filename = file.name.replace(/\.(avif|heif)$/i, '.jpg');
+
+// With this (replace ALL occurrences):
+const filename = file.name.replace(/\.([new-input-format]|[alternative-format])$/i, '.[output-format]');
+
+// Example:
+const filename = file.name.replace(/\.(heif|heic)$/i, '.jpg');
+```
+
+### Step 5: Update Layout Props (EXACT REPLACEMENTS ONLY)
+**Replace these EXACT strings:**
+
+```javascript
+// Replace this:
+title="Convert AVIF to JPG Online for Free"
+description="Convert AVIF images to JPG format instantly. High-quality conversion with customizable quality settings. Free, fast, and secure."
+keywords="AVIF to JPG, convert AVIF, AVIF converter, image converter, free converter"
+
+// With this:
+title="Convert [INPUT] to [OUTPUT] Online for Free"
+description="Convert [INPUT] images to [OUTPUT] format instantly. High-quality conversion with customizable quality settings. Free, fast, and secure."
+keywords="[INPUT] to [OUTPUT], convert [INPUT], [INPUT] converter, image converter, free converter"
+```
+
+### Step 6: Update Theme Class (EXACT REPLACEMENTS ONLY)
+**Replace this EXACT string:**
+
+```javascript
+// Replace this:
+<div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-blue">
+
+// With this:
+<div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-[color]">
+```
+
+### Step 6.5: Update Badge Colors (EXACT REPLACEMENTS ONLY)
+**Replace this EXACT string:**
+
+```javascript
+// Replace this:
+<div className="inline-flex items-center space-x-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+
+// With this:
+<div className="inline-flex items-center space-x-2 bg-[color]-100 dark:bg-[color]-900/30 text-[color]-700 dark:text-[color]-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+
+// Example for lime theme:
+<div className="inline-flex items-center space-x-2 bg-lime-100 dark:bg-lime-900/30 text-lime-700 dark:text-lime-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+```
+
+### Step 7: Update Main Heading with Accent Colors (EXACT REPLACEMENTS ONLY)
+**Replace this EXACT string:**
+
+```javascript
+// Replace this:
+<h1 className="heading-1 mb-6">
+  Convert AVIF to JPG Online for Free
+</h1>
+
+// With this:
+<h1 className="heading-1 mb-6">
+  Convert{' '}
+  <span className="bg-gradient-to-r from-[color-500] to-[color-600] bg-clip-text text-transparent">
+    [INPUT] to [OUTPUT]
+  </span>
+  {' '}Online
+</h1>
+
+// Example:
+<h1 className="heading-1 mb-6">
+  Convert{' '}
+  <span className="bg-gradient-to-r from-sky-500 to-blue-500 bg-clip-text text-transparent">
+    HEIF to JPG
+  </span>
+  {' '}Online
+</h1>
+```
+
+### Step 8: Update Description Text (EXACT REPLACEMENTS ONLY)
+**Replace this EXACT string:**
+
+```javascript
+// Replace this:
+Transform your AVIF images to universal JPG format instantly.
+
+// With this:
+Transform your [INPUT] images to universal [OUTPUT] format instantly.
+```
+
+### Step 9: Update Upload Section (EXACT REPLACEMENTS ONLY)
+**Replace these EXACT strings:**
+
+```javascript
+// Replace this:
+<h2 className="heading-3 mb-2">Upload Your AVIF Files</h2>
+
+// With this:
+<h2 className="heading-3 mb-2">Upload Your [INPUT] Files</h2>
+
+// Replace this:
+acceptedFileTypes={['image/avif', 'image/heif']}
+
+// With this:
+acceptedFileTypes={['image/[input-format]', 'image/[alternative-format]']}
+```
+
+### Step 10: Update Button Class (EXACT REPLACEMENTS ONLY)
+**Replace this EXACT string:**
+
+```javascript
+// Replace this:
+className="convert-button-blue w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
+
+// With this:
+className="convert-button-[color] w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
+```
+
+### Step 11: Update All Content Text (EXACT REPLACEMENTS ONLY)
+**Replace ALL occurrences of:**
+- `AVIF` → `[INPUT]`
+- `JPG` → `[OUTPUT]`
+- `avif` → `[input-format]`
+- `jpg` → `[output-format]`
+
+### Step 12: Update Export Statement (EXACT REPLACEMENTS ONLY)
+**Replace this EXACT string:**
+
+```javascript
+// Replace this:
+export default AvifToJpgPage;
+
+// With this:
+export default [NewConverterName]Page;
+```
+
+### Step 13: Update Imports (Keep Exactly the Same)
 ```javascript
 import React, { useState } from 'react';
 import Layout from '../../components/Layout';
@@ -193,14 +370,45 @@ export default WebpToAvifPage;  // ← Change this
 
 ## 🎨 Color Theme Mapping
 
-| Page Type | Theme Class | Button Class | Badge Colors |
-|-----------|-------------|--------------|--------------|
-| AVIF to JPG | `page-theme-blue` | `convert-button-blue` | `bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300` |
-| AVIF to PNG | `page-theme-green` | `convert-button-green` | `bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300` |
-| AVIF to WEBP | `page-theme-red` | `convert-button-red` | `bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300` |
-| JPG to AVIF | `page-theme-orange` | `convert-button-orange` | `bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300` |
-| PNG to AVIF | `page-theme-purple` | `convert-button-purple` | `bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300` |
-| WEBP to AVIF | `page-theme-cyan` | `convert-button-cyan` | `bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300` |
+| Page Type | Theme Class | Button Class | Badge Colors | Heading Accent Colors |
+|-----------|-------------|--------------|--------------|----------------------|
+| AVIF to JPG | `page-theme-blue` | `convert-button-blue` | `bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300` | `from-blue-500 to-blue-600` |
+| AVIF to PNG | `page-theme-green` | `convert-button-green` | `bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300` | `from-green-500 to-green-600` |
+| AVIF to WEBP | `page-theme-red` | `convert-button-red` | `bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300` | `from-red-500 to-red-600` |
+| JPG to AVIF | `page-theme-orange` | `convert-button-orange` | `bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300` | `from-orange-500 to-orange-600` |
+| PNG to AVIF | `page-theme-purple` | `convert-button-purple` | `bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300` | `from-purple-500 to-purple-600` |
+| WEBP to AVIF | `page-theme-cyan` | `convert-button-cyan` | `bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300` | `from-cyan-500 to-cyan-600` |
+| HEIC to JPG | `page-theme-fuchsia` | `convert-button-fuchsia` | `bg-fuchsia-100 dark:bg-fuchsia-900/30 text-fuchsia-700 dark:text-fuchsia-300` | `from-fuchsia-500 to-fuchsia-600` |
+| HEIC to PNG | `page-theme-emerald` | `convert-button-emerald` | `bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300` | `from-emerald-500 to-emerald-600` |
+| HEIF to JPG | `page-theme-sky` | `convert-button-sky` | `bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300` | `from-sky-500 to-blue-500` |
+| JPG to PNG | `page-theme-emerald` | `convert-button-emerald` | `bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300` | `from-emerald-500 to-emerald-600` |
+| PNG to JPG | `page-theme-teal` | `convert-button-teal` | `bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300` | `from-teal-500 to-teal-600` |
+| JPG to WebP | `page-theme-lime` | `convert-button-lime` | `bg-lime-100 dark:bg-lime-900/30 text-lime-700 dark:text-lime-300` | `from-lime-500 to-lime-600` |
+| PNG to WebP | `page-theme-indigo` | `convert-button-indigo` | `bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300` | `from-indigo-500 to-indigo-600` |
+| WebP to JPG | `page-theme-rose` | `convert-button-rose` | `bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300` | `from-rose-500 to-rose-600` |
+| WebP to PNG | `page-theme-violet` | `convert-button-violet` | `bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300` | `from-violet-500 to-violet-600` |
+| BMP to JPG | `page-theme-slate` | `convert-button-slate` | `bg-slate-100 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300` | `from-slate-500 to-slate-600` |
+| BMP to PNG | `page-theme-amber` | `convert-button-amber` | `bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300` | `from-amber-500 to-amber-600` |
+| BMP to WebP | `page-theme-sky` | `convert-button-sky` | `bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300` | `from-sky-500 to-sky-600` |
+
+### 🎨 Heading Accent Color Implementation
+**Use this EXACT pattern for all converter headings:**
+
+```javascript
+<h1 className="heading-1 mb-6">
+  Convert{' '}
+  <span className="bg-gradient-to-r from-[color-500] to-[color-600] bg-clip-text text-transparent">
+    [INPUT] to [OUTPUT]
+  </span>
+  {' '}Online for Free
+</h1>
+```
+
+**Examples:**
+- **Blue theme:** `from-blue-500 to-blue-600`
+- **Green theme:** `from-green-500 to-green-600`
+- **Sky theme:** `from-sky-500 to-blue-500`
+- **Fuchsia theme:** `from-fuchsia-500 to-fuchsia-600`
 
 ## 📁 Required Files to Create
 

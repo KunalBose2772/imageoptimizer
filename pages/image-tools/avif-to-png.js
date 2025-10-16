@@ -209,7 +209,11 @@ const AvifToPngPage = () => {
                   </div>
                   
                   <h1 className="heading-1 mb-6">
-                    Convert AVIF to PNG Online for Free
+                    Convert{' '}
+                    <span className="bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent">
+                      AVIF to PNG
+                    </span>
+                    {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">

@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const AvifToJpgPage = () => {
+const SvgToPngPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
@@ -51,7 +51,7 @@ const AvifToJpgPage = () => {
         formData.append('file', file.file);
         formData.append('quality', quality);
 
-        const response = await fetch('/api/image/avif-to-jpg', {
+        const response = await fetch('/api/image/svg-to-png', {
           method: 'POST',
           body: formData,
         });
@@ -62,7 +62,7 @@ const AvifToJpgPage = () => {
 
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
-        const filename = file.name.replace(/\.(avif|heif)$/i, '.jpg');
+        const filename = file.name.replace(/\.(svg)$/i, '.png');
         
         setConvertedFiles([{
           url,
@@ -84,7 +84,7 @@ const AvifToJpgPage = () => {
             formData.append('file', file.file);
             formData.append('quality', quality);
 
-            const response = await fetch('/api/image/avif-to-jpg', {
+            const response = await fetch('/api/image/svg-to-png', {
               method: 'POST',
               body: formData,
             });
@@ -92,7 +92,7 @@ const AvifToJpgPage = () => {
             if (response.ok) {
               const blob = await response.blob();
               const url = URL.createObjectURL(blob);
-              const filename = file.name.replace(/\.(avif|heif)$/i, '.jpg');
+              const filename = file.name.replace(/\.(svg)$/i, '.png');
               
               convertedResults.push({
                 url,
@@ -178,11 +178,11 @@ const AvifToJpgPage = () => {
 
   return (
     <Layout 
-      title="Convert AVIF to JPG Online for Free"
-      description="Convert AVIF images to JPG format instantly. High-quality conversion with customizable quality settings. Free, fast, and secure."
-      keywords="AVIF to JPG, convert AVIF, AVIF converter, image converter, free converter"
+      title="Convert SVG to PNG Online for Free"
+      description="Convert SVG files to PNG format instantly. Lossless conversion with transparency support. Free, fast, and secure."
+      keywords="SVG to PNG, convert SVG, SVG converter, image converter, free converter"
     >
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-blue">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-teal">
         {/* Hero Section with Upload */}
         <section className="section-padding bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
           <div className="container-custom">
@@ -190,22 +190,22 @@ const AvifToJpgPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                 {/* Left Side - Content */}
                 <div className="text-center lg:text-left">
-                  <div className="inline-flex items-center space-x-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                  <div className="inline-flex items-center space-x-2 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
                     <Image className="w-4 h-4" />
                     <span>Image Conversion Tool</span>
                   </div>
                   
                   <h1 className="heading-1 mb-6">
                     Convert{' '}
-                    <span className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-                      AVIF to JPG
+                    <span className="bg-gradient-to-r from-teal-500 to-teal-600 bg-clip-text text-transparent">
+                      SVG to PNG
                     </span>
                     {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">
-                    Transform your AVIF images to universal JPG format instantly. 
-                    High-quality conversion with customizable quality settings. 
+                    Transform your SVG files to universal PNG format instantly. 
+                    Lossless conversion with transparency support. 
                     No registration required, completely free.
                   </p>
                   
@@ -228,7 +228,7 @@ const AvifToJpgPage = () => {
                 {/* Right Side - Upload Interface */}
                 <div className="glass-morphism-box no-shine rounded-3xl p-8">
                   <div className="text-center mb-6">
-                    <h2 className="heading-3 mb-2">Upload Your AVIF Files</h2>
+                    <h2 className="heading-3 mb-2">Upload Your SVG Files</h2>
                     <p className="text-gray-600 dark:text-gray-400">Drag & drop or click to browse</p>
                   </div>
                   
@@ -259,7 +259,7 @@ const AvifToJpgPage = () => {
                   
                   <FileUploader
                     onFilesSelected={handleFileSelect}
-                    acceptedFileTypes={['image/avif', 'image/heif']}
+                    acceptedFileTypes={['image/svg+xml', 'image/svg']}
                     maxFiles={conversionMode === 'batch' ? 20 : 1}
                     maxSize={50 * 1024 * 1024}
                     multiple={conversionMode === 'batch'}
@@ -288,33 +288,13 @@ const AvifToJpgPage = () => {
                     </div>
                   )}
 
-                  {/* Quality Settings */}
-                  {selectedFiles && selectedFiles.length > 0 && (
-                    <div className="mt-6">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        JPEG Quality: {quality}%
-                      </label>
-                      <input
-                        type="range"
-                        min="10"
-                        max="100"
-                        value={quality}
-                        onChange={(e) => setQuality(parseInt(e.target.value))}
-                        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                      />
-                      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        <span>Lower Size</span>
-                        <span>Higher Quality</span>
-                      </div>
-                    </div>
-                  )}
 
                   {/* Convert Button */}
                   <div className="mt-6">
                     <button
                       onClick={handleConvert}
                       disabled={!selectedFiles || selectedFiles.length === 0 || isConverting}
-                      className="convert-button-blue w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
+                      className="convert-button-teal w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
                     >
                       {isConverting ? (
                         <>
@@ -324,7 +304,7 @@ const AvifToJpgPage = () => {
                       ) : (
                         <>
                           <Download className="w-5 h-5" />
-                          <span>Convert to JPG</span>
+                          <span>Convert to PNG</span>
                         </>
                       )}
                     </button>
@@ -384,9 +364,9 @@ const AvifToJpgPage = () => {
           <div className="container-custom">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="heading-2 mb-4">Why Choose Our AVIF to JPG Converter?</h2>
+                <h2 className="heading-2 mb-4">Why Choose Our SVG to PNG Converter?</h2>
                 <p className="text-large">
-                  Experience the best AVIF to JPG conversion with our advanced features.
+                  Experience the best SVG to PNG conversion with our advanced features.
                 </p>
               </div>
               
@@ -439,7 +419,7 @@ const AvifToJpgPage = () => {
         <section className="section-padding bg-gray-50 dark:bg-gray-900">
           <div className="container-custom">
             <div className="max-w-7xl mx-auto prose prose-lg dark:prose-invert">
-              <h2 className="heading-2 mb-6">Complete Guide to Converting AVIF to JPG</h2>
+              <h2 className="heading-2 mb-6">Complete Guide to Converting SVG to PNG</h2>
               
               <p className="text-body mb-6">
                 AVIF (AV1 Image File Format) is a modern image format that offers superior compression 
@@ -455,7 +435,7 @@ const AvifToJpgPage = () => {
                 universal compatibility.
               </p>
 
-              <h3 className="heading-3 mb-4">Why Convert AVIF to JPG?</h3>
+              <h3 className="heading-3 mb-4">Why Convert SVG to PNG?</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
                 <li><strong>Universal Compatibility:</strong> JPG is supported by all devices and browsers</li>
                 <li><strong>Wide Application Support:</strong> Works with all image editing software</li>
@@ -463,7 +443,7 @@ const AvifToJpgPage = () => {
                 <li><strong>Print Friendly:</strong> Better support for printing and professional use</li>
               </ul>
 
-              <h3 className="heading-3 mb-4">How Our AVIF to JPG Converter Works</h3>
+              <h3 className="heading-3 mb-4">How Our SVG to PNG Converter Works</h3>
               <p className="text-body mb-6">
                 Our converter uses advanced Sharp and Pillow libraries to ensure high-quality conversion. 
                 The process involves decoding the AVIF file, applying quality optimization, and encoding 
@@ -501,9 +481,9 @@ const AvifToJpgPage = () => {
               
               <div className="space-y-6">
                 <div className="card p-6">
-                  <h3 className="heading-4 mb-3">Is AVIF to JPG conversion free?</h3>
+                  <h3 className="heading-4 mb-3">Is SVG to PNG conversion free?</h3>
                   <p className="text-body">
-                    Yes, our AVIF to JPG converter is completely free to use with no hidden costs, 
+                    Yes, our SVG to PNG converter is completely free to use with no hidden costs, 
                     watermarks, or limitations. You can convert unlimited files without registration.
                   </p>
                 </div>
@@ -511,7 +491,7 @@ const AvifToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">What is the maximum file size I can convert?</h3>
                   <p className="text-body">
-                    You can convert AVIF files up to 50MB in size. For larger files, consider 
+                    You can convert SVG files up to 50MB in size. For larger files, consider 
                     compressing them first or contact our support team for assistance.
                   </p>
                 </div>
@@ -519,7 +499,7 @@ const AvifToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">How long does conversion take?</h3>
                   <p className="text-body">
-                    Most AVIF to JPG conversions complete in under 3 seconds. Processing time 
+                    Most SVG to PNG conversions complete in under 3 seconds. Processing time 
                     depends on file size and current server load.
                   </p>
                 </div>
@@ -557,5 +537,5 @@ const AvifToJpgPage = () => {
   );
 };
 
-export default AvifToJpgPage;
+export default SvgToPngPage;
 
