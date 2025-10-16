@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const HeicToJpgPage = () => {
+const TiffToWebpPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
@@ -51,7 +51,7 @@ const HeicToJpgPage = () => {
         formData.append('file', file.file);
         formData.append('quality', quality);
 
-        const response = await fetch('/api/image/heic-to-jpg', {
+        const response = await fetch('/api/image/tiff-to-webp', {
           method: 'POST',
           body: formData,
         });
@@ -62,7 +62,7 @@ const HeicToJpgPage = () => {
 
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
-        const filename = file.name.replace(/\.(heic|heif)$/i, '.jpg');
+        const filename = file.name.replace(/\.(tiff|tif)$/i, '.webp');
         
         setConvertedFiles([{
           url,
@@ -84,7 +84,7 @@ const HeicToJpgPage = () => {
             formData.append('file', file.file);
             formData.append('quality', quality);
 
-            const response = await fetch('/api/image/heic-to-jpg', {
+            const response = await fetch('/api/image/tiff-to-webp', {
               method: 'POST',
               body: formData,
             });
@@ -92,7 +92,7 @@ const HeicToJpgPage = () => {
             if (response.ok) {
               const blob = await response.blob();
               const url = URL.createObjectURL(blob);
-              const filename = file.name.replace(/\.(heic|heif)$/i, '.jpg');
+              const filename = file.name.replace(/\.(tiff|tif)$/i, '.webp');
               
               convertedResults.push({
                 url,
@@ -178,11 +178,11 @@ const HeicToJpgPage = () => {
 
   return (
     <Layout 
-      title="Convert HEIC to JPG Online for Free"
-      description="Convert HEIC images to JPG format instantly. Universal compatibility with customizable quality settings. Free, fast, and secure."
-      keywords="HEIC to JPG, convert HEIC, HEIC converter, image converter, free converter"
+      title="Convert TIFF to WebP Online for Free"
+      description="Convert TIFF images to WebP format instantly. High-quality conversion with customizable quality settings. Free, fast, and secure."
+      keywords="TIFF to WebP, convert TIFF, TIFF converter, image converter, free converter"
     >
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-fuchsia">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-sky">
         {/* Hero Section with Upload */}
         <section className="section-padding bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
           <div className="container-custom">
@@ -190,22 +190,22 @@ const HeicToJpgPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                 {/* Left Side - Content */}
                 <div className="text-center lg:text-left">
-                  <div className="inline-flex items-center space-x-2 bg-fuchsia-100 dark:bg-fuchsia-900/30 text-fuchsia-700 dark:text-fuchsia-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                  <div className="inline-flex items-center space-x-2 bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
                     <Image className="w-4 h-4" />
                     <span>Image Conversion Tool</span>
                   </div>
                   
                   <h1 className="heading-1 mb-6">
                     Convert{' '}
-                    <span className="bg-gradient-to-r from-fuchsia-500 to-fuchsia-600 bg-clip-text text-transparent">
-                      HEIC to JPG
+                    <span className="bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
+                      TIFF to WebP
                     </span>
                     {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">
-                    Transform your HEIC images to JPG format instantly. 
-                    Universal compatibility with customizable quality settings. 
+                    Transform your TIFF images to modern WebP format instantly. 
+                    High-quality conversion with customizable quality settings. 
                     No registration required, completely free.
                   </p>
                   
@@ -228,7 +228,7 @@ const HeicToJpgPage = () => {
                 {/* Right Side - Upload Interface */}
                 <div className="glass-morphism-box no-shine rounded-3xl p-8">
                   <div className="text-center mb-6">
-                    <h2 className="heading-3 mb-2">Upload Your HEIC Files</h2>
+                    <h2 className="heading-3 mb-2">Upload Your TIFF Files</h2>
                     <p className="text-gray-600 dark:text-gray-400">Drag & drop or click to browse</p>
                   </div>
                   
@@ -259,7 +259,7 @@ const HeicToJpgPage = () => {
                   
                   <FileUploader
                     onFilesSelected={handleFileSelect}
-                    acceptedFileTypes={['image/heic', 'image/heif']}
+                    acceptedFileTypes={['image/tiff', 'image/tif']}
                     maxFiles={conversionMode === 'batch' ? 20 : 1}
                     maxSize={50 * 1024 * 1024}
                     multiple={conversionMode === 'batch'}
@@ -292,7 +292,7 @@ const HeicToJpgPage = () => {
                   {selectedFiles && selectedFiles.length > 0 && (
                     <div className="mt-6">
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        JPEG Quality: {quality}%
+                        WebP Quality: {quality}%
                       </label>
                       <input
                         type="range"
@@ -314,7 +314,7 @@ const HeicToJpgPage = () => {
                     <button
                       onClick={handleConvert}
                       disabled={!selectedFiles || selectedFiles.length === 0 || isConverting}
-                      className="convert-button-fuchsia w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
+                      className="convert-button-sky w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
                     >
                       {isConverting ? (
                         <>
@@ -324,7 +324,7 @@ const HeicToJpgPage = () => {
                       ) : (
                         <>
                           <Download className="w-5 h-5" />
-                          <span>Convert to JPG</span>
+                          <span>Convert to WebP</span>
                         </>
                       )}
                     </button>
@@ -378,14 +378,15 @@ const HeicToJpgPage = () => {
           </div>
         </section>
 
+
         {/* Features Section */}
         <section className="section-padding bg-white dark:bg-gray-800">
           <div className="container-custom">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="heading-2 mb-4">Why Choose Our HEIC to JPG Converter?</h2>
+                <h2 className="heading-2 mb-4">Why Choose Our TIFF to WebP Converter?</h2>
                 <p className="text-large">
-                  Experience the best HEIC to JPG conversion with our advanced features.
+                  Experience the best TIFF to WebP conversion with our advanced features.
                 </p>
               </div>
               
@@ -396,7 +397,7 @@ const HeicToJpgPage = () => {
                   </div>
                   <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Lightning Fast</h3>
                   <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
-                    Convert your HEIC files to JPG in seconds with our optimized processing engine.
+                    Convert your AVIF files to JPG in seconds with our optimized processing engine.
                   </p>
                 </div>
                 
@@ -406,7 +407,7 @@ const HeicToJpgPage = () => {
                   </div>
                   <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Batch Conversion</h3>
                   <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
-                    Convert up to 20 HEIC files simultaneously with our batch processing feature.
+                    Convert up to 20 AVIF files simultaneously with our batch processing feature.
                   </p>
                 </div>
                 
@@ -424,9 +425,9 @@ const HeicToJpgPage = () => {
                   <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300">
                     <Star className="w-8 h-8 text-white drop-shadow-lg" />
                   </div>
-                  <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Universal Compatibility</h3>
+                  <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">High Quality</h3>
                   <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
-                    JPG format works on all devices, browsers, and applications worldwide.
+                    Maintain image quality with customizable compression settings and advanced algorithms.
                   </p>
                 </div>
               </div>
@@ -438,36 +439,36 @@ const HeicToJpgPage = () => {
         <section className="section-padding bg-gray-50 dark:bg-gray-900">
           <div className="container-custom">
             <div className="max-w-7xl mx-auto prose prose-lg dark:prose-invert">
-              <h2 className="heading-2 mb-6">Complete Guide to Converting HEIC to JPG</h2>
+              <h2 className="heading-2 mb-6">Complete Guide to Converting TIFF to WebP</h2>
               
               <p className="text-body mb-6">
-                HEIC (High Efficiency Image Container) is Apple's modern image format used by default 
-                on iPhones and iPads. While HEIC offers excellent compression, it's not universally 
-                supported. Converting HEIC to JPG ensures compatibility with all devices and platforms.
+                TIFF (Tagged Image File Format) is a high-quality image format commonly used in professional 
+                photography and printing. However, TIFF files are often too large for web use and not 
+                supported by all applications, making WebP conversion essential for broader compatibility.
               </p>
 
-              <h3 className="heading-3 mb-4">What is HEIC Format?</h3>
+              <h3 className="heading-3 mb-4">What is TIFF Format?</h3>
               <p className="text-body mb-6">
-                HEIC is Apple's modern image format that provides superior compression compared to JPEG. 
-                It's the default format for photos taken on iPhones and iPads running iOS 11 or later. 
-                While HEIC offers better quality and smaller file sizes, it's not supported by all 
-                devices and applications, making JPG conversion necessary for universal compatibility.
+                TIFF is a flexible, adaptable file format for handling images and data within a single file. 
+                It supports both lossless and lossy compression and can store multiple images in a single file. 
+                However, TIFF files are often very large and not supported by all web browsers, making WebP 
+                conversion necessary for universal compatibility.
               </p>
 
-              <h3 className="heading-3 mb-4">Why Convert HEIC to JPG?</h3>
+              <h3 className="heading-3 mb-4">Why Convert TIFF to WebP?</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li><strong>Universal Compatibility:</strong> JPG is supported by all devices and platforms</li>
-                <li><strong>Easy Sharing:</strong> Works with email, social media, and messaging apps</li>
-                <li><strong>Web Compatibility:</strong> Displays correctly on all websites and browsers</li>
-                <li><strong>Legacy Support:</strong> Works with older software and devices</li>
+                <li><strong>Superior Compression:</strong> WebP provides 25-35% better compression than JPEG</li>
+                <li><strong>Modern Format:</strong> Supported by all modern browsers and devices</li>
+                <li><strong>Transparency Support:</strong> Preserves alpha channels and transparency</li>
+                <li><strong>Web Optimized:</strong> Perfect balance of quality and file size</li>
               </ul>
 
-              <h3 className="heading-3 mb-4">How Our HEIC to JPG Converter Works</h3>
+              <h3 className="heading-3 mb-4">How Our TIFF to WebP Converter Works</h3>
               <p className="text-body mb-6">
-                Our converter uses advanced Sharp and Pillow libraries to ensure high-quality conversion. 
-                The process involves decoding the HEIC file, applying quality optimization, and encoding 
-                to JPG format while preserving maximum visual fidelity. You can convert single files or 
-                batch process up to 20 HEIC files simultaneously for maximum efficiency.
+                Our converter uses advanced Sharp library to ensure high-quality conversion. 
+                The process involves decoding the TIFF file and encoding to WebP format while preserving 
+                maximum visual fidelity and transparency. You can convert single files or 
+                batch process up to 20 TIFF files simultaneously for maximum efficiency.
               </p>
 
               <h3 className="heading-3 mb-4">Quality Settings Explained</h3>
@@ -484,9 +485,9 @@ const HeicToJpgPage = () => {
               <h3 className="heading-3 mb-4">Best Practices</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
                 <li>Use 85-95% quality for professional images</li>
-                <li>Use 70-80% quality for web images and social media</li>
+                <li>Use 70-80% quality for web images</li>
                 <li>Use 50-70% quality for thumbnails and previews</li>
-                <li>Always keep original HEIC files as backup</li>
+                <li>Always preview before finalizing</li>
               </ul>
             </div>
           </div>
@@ -500,9 +501,9 @@ const HeicToJpgPage = () => {
               
               <div className="space-y-6">
                 <div className="card p-6">
-                  <h3 className="heading-4 mb-3">Is HEIC to JPG conversion free?</h3>
+                  <h3 className="heading-4 mb-3">Is TIFF to WebP conversion free?</h3>
                   <p className="text-body">
-                    Yes, our HEIC to JPG converter is completely free to use with no hidden costs, 
+                    Yes, our TIFF to WebP converter is completely free to use with no hidden costs, 
                     watermarks, or limitations. You can convert unlimited files without registration.
                   </p>
                 </div>
@@ -510,7 +511,7 @@ const HeicToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">What is the maximum file size I can convert?</h3>
                   <p className="text-body">
-                    You can convert HEIC files up to 50MB in size. For larger files, consider 
+                    You can convert AVIF files up to 50MB in size. For larger files, consider 
                     compressing them first or contact our support team for assistance.
                   </p>
                 </div>
@@ -518,7 +519,7 @@ const HeicToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">How long does conversion take?</h3>
                   <p className="text-body">
-                    Most HEIC to JPG conversions complete in under 3 seconds. Processing time 
+                    Most TIFF to WebP conversions complete in under 3 seconds. Processing time 
                     depends on file size and current server load.
                   </p>
                 </div>
@@ -542,7 +543,7 @@ const HeicToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">Can I convert multiple files at once?</h3>
                   <p className="text-body">
-                    Yes! Our converter supports batch processing of up to 20 HEIC files simultaneously. 
+                    Yes! Our converter supports batch processing of up to 20 AVIF files simultaneously. 
                     Simply select "Batch" mode, upload multiple files, and convert them all at once. 
                     Each file is processed individually to ensure optimal quality.
                   </p>
@@ -556,4 +557,5 @@ const HeicToJpgPage = () => {
   );
 };
 
-export default HeicToJpgPage;
+export default TiffToWebpPage;
+

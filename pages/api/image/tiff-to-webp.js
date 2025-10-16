@@ -16,15 +16,17 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: `Method ${req.method} not allowed` });
   }
 
+  console.log('TIFF to WebP conversion request received');
+  
   try {
     // Parse the form data
     const form = formidable({
-      uploadDir: './public/uploads',
+      uploadDir: path.join(process.cwd(), 'public', 'uploads'),
       keepExtensions: true,
       maxFileSize: 50 * 1024 * 1024, // 50MB
       filter: ({ mimetype }) => {
-        // Only allow HEIC/HEIF files
-        return mimetype && (mimetype.includes('image/heic') || mimetype.includes('image/heif'));
+        // Only allow TIFF files
+        return mimetype && (mimetype.includes('image/tiff') || mimetype.includes('image/tif'));
       },
     });
 
@@ -45,15 +47,14 @@ export default async function handler(req, res) {
     // Generate output filename
     const originalName = uploadedFile.originalFilename || 'converted';
     const baseName = path.parse(originalName).name;
-    const outputFilename = `${baseName}_converted.jpg`;
-    const outputPath = path.join('./public/uploads', outputFilename);
+    const outputFilename = `${baseName}_converted.webp`;
+    const outputPath = path.join(process.cwd(), 'public', 'uploads', outputFilename);
 
-    // Convert HEIC to JPG using Sharp
+    // Convert TIFF to WebP using Sharp
     await sharp(uploadedFile.filepath)
-      .jpeg({ 
+      .webp({ 
         quality: quality,
-        progressive: true,
-        mozjpeg: true // Use mozjpeg encoder for better compression
+        effort: 6 // Higher effort for better compression
       })
       .toFile(outputPath);
 
@@ -78,7 +79,7 @@ export default async function handler(req, res) {
     }
 
     // Set response headers
-    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader('Content-Type', 'image/webp');
     res.setHeader('Content-Disposition', `attachment; filename="${outputFilename}"`);
     res.setHeader('Content-Length', convertedBuffer.length);
 
@@ -90,11 +91,11 @@ export default async function handler(req, res) {
     
     // Clean up any temporary files on error
     try {
-      if (files?.file?.[0]?.filepath && fs.existsSync(files.file[0].filepath)) {
-        fs.unlinkSync(files.file[0].filepath);
+      if (req.files?.file?.[0]?.filepath) {
+        fs.unlinkSync(req.files.file[0].filepath);
       }
     } catch (cleanupError) {
-      console.warn('Cleanup error:', cleanupError.message);
+      console.error('Cleanup error:', cleanupError);
     }
 
     res.status(500).json({ 
@@ -103,5 +104,3 @@ export default async function handler(req, res) {
     });
   }
 }
-
-

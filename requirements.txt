@@ -1,0 +1,17 @@
+# AI Image Processing Dependencies
+rembg==2.0.50
+Pillow==10.0.1
+numpy==1.24.3
+scipy==1.11.3
+
+# Optional: For advanced AI upscaling (ESRGAN)
+# torch==2.0.1
+# torchvision==0.15.2
+# opencv-python==4.8.1.78
+
+# Image processing utilities
+opencv-python-headless==4.8.1.78
+scikit-image==0.21.0
+
+# File handling
+python-multipart==0.0.6

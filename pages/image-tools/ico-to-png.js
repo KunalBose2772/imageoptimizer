@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const HeicToJpgPage = () => {
+const IcoToPngPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
@@ -51,7 +51,7 @@ const HeicToJpgPage = () => {
         formData.append('file', file.file);
         formData.append('quality', quality);
 
-        const response = await fetch('/api/image/heic-to-jpg', {
+        const response = await fetch('/api/image/ico-to-png', {
           method: 'POST',
           body: formData,
         });
@@ -62,7 +62,7 @@ const HeicToJpgPage = () => {
 
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
-        const filename = file.name.replace(/\.(heic|heif)$/i, '.jpg');
+        const filename = file.name.replace(/\.(ico)$/i, '.png');
         
         setConvertedFiles([{
           url,
@@ -84,7 +84,7 @@ const HeicToJpgPage = () => {
             formData.append('file', file.file);
             formData.append('quality', quality);
 
-            const response = await fetch('/api/image/heic-to-jpg', {
+            const response = await fetch('/api/image/ico-to-png', {
               method: 'POST',
               body: formData,
             });
@@ -92,7 +92,7 @@ const HeicToJpgPage = () => {
             if (response.ok) {
               const blob = await response.blob();
               const url = URL.createObjectURL(blob);
-              const filename = file.name.replace(/\.(heic|heif)$/i, '.jpg');
+              const filename = file.name.replace(/\.(ico)$/i, '.png');
               
               convertedResults.push({
                 url,
@@ -178,9 +178,9 @@ const HeicToJpgPage = () => {
 
   return (
     <Layout 
-      title="Convert HEIC to JPG Online for Free"
-      description="Convert HEIC images to JPG format instantly. Universal compatibility with customizable quality settings. Free, fast, and secure."
-      keywords="HEIC to JPG, convert HEIC, HEIC converter, image converter, free converter"
+      title="Convert ICO to PNG Online for Free"
+      description="Convert ICO files to PNG format instantly. Lossless conversion with transparency support. Free, fast, and secure."
+      keywords="ICO to PNG, convert ICO, ICO converter, image converter, free converter"
     >
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-fuchsia">
         {/* Hero Section with Upload */}
@@ -198,14 +198,14 @@ const HeicToJpgPage = () => {
                   <h1 className="heading-1 mb-6">
                     Convert{' '}
                     <span className="bg-gradient-to-r from-fuchsia-500 to-fuchsia-600 bg-clip-text text-transparent">
-                      HEIC to JPG
+                      ICO to PNG
                     </span>
                     {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">
-                    Transform your HEIC images to JPG format instantly. 
-                    Universal compatibility with customizable quality settings. 
+                    Transform your ICO files to universal PNG format instantly. 
+                    Lossless conversion with transparency support. 
                     No registration required, completely free.
                   </p>
                   
@@ -228,7 +228,7 @@ const HeicToJpgPage = () => {
                 {/* Right Side - Upload Interface */}
                 <div className="glass-morphism-box no-shine rounded-3xl p-8">
                   <div className="text-center mb-6">
-                    <h2 className="heading-3 mb-2">Upload Your HEIC Files</h2>
+                    <h2 className="heading-3 mb-2">Upload Your ICO Files</h2>
                     <p className="text-gray-600 dark:text-gray-400">Drag & drop or click to browse</p>
                   </div>
                   
@@ -259,7 +259,7 @@ const HeicToJpgPage = () => {
                   
                   <FileUploader
                     onFilesSelected={handleFileSelect}
-                    acceptedFileTypes={['image/heic', 'image/heif']}
+                    acceptedFileTypes={['image/x-icon', 'image/vnd.microsoft.icon']}
                     maxFiles={conversionMode === 'batch' ? 20 : 1}
                     maxSize={50 * 1024 * 1024}
                     multiple={conversionMode === 'batch'}
@@ -288,26 +288,6 @@ const HeicToJpgPage = () => {
                     </div>
                   )}
 
-                  {/* Quality Settings */}
-                  {selectedFiles && selectedFiles.length > 0 && (
-                    <div className="mt-6">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        JPEG Quality: {quality}%
-                      </label>
-                      <input
-                        type="range"
-                        min="10"
-                        max="100"
-                        value={quality}
-                        onChange={(e) => setQuality(parseInt(e.target.value))}
-                        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                      />
-                      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        <span>Lower Size</span>
-                        <span>Higher Quality</span>
-                      </div>
-                    </div>
-                  )}
 
                   {/* Convert Button */}
                   <div className="mt-6">
@@ -324,7 +304,7 @@ const HeicToJpgPage = () => {
                       ) : (
                         <>
                           <Download className="w-5 h-5" />
-                          <span>Convert to JPG</span>
+                          <span>Convert to PNG</span>
                         </>
                       )}
                     </button>
@@ -378,14 +358,15 @@ const HeicToJpgPage = () => {
           </div>
         </section>
 
+
         {/* Features Section */}
         <section className="section-padding bg-white dark:bg-gray-800">
           <div className="container-custom">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="heading-2 mb-4">Why Choose Our HEIC to JPG Converter?</h2>
+                <h2 className="heading-2 mb-4">Why Choose Our ICO to PNG Converter?</h2>
                 <p className="text-large">
-                  Experience the best HEIC to JPG conversion with our advanced features.
+                  Experience the best ICO to PNG conversion with our advanced features.
                 </p>
               </div>
               
@@ -396,7 +377,7 @@ const HeicToJpgPage = () => {
                   </div>
                   <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Lightning Fast</h3>
                   <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
-                    Convert your HEIC files to JPG in seconds with our optimized processing engine.
+                    Convert your AVIF files to JPG in seconds with our optimized processing engine.
                   </p>
                 </div>
                 
@@ -406,7 +387,7 @@ const HeicToJpgPage = () => {
                   </div>
                   <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Batch Conversion</h3>
                   <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
-                    Convert up to 20 HEIC files simultaneously with our batch processing feature.
+                    Convert up to 20 AVIF files simultaneously with our batch processing feature.
                   </p>
                 </div>
                 
@@ -424,9 +405,9 @@ const HeicToJpgPage = () => {
                   <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300">
                     <Star className="w-8 h-8 text-white drop-shadow-lg" />
                   </div>
-                  <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Universal Compatibility</h3>
+                  <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">High Quality</h3>
                   <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
-                    JPG format works on all devices, browsers, and applications worldwide.
+                    Maintain image quality with customizable compression settings and advanced algorithms.
                   </p>
                 </div>
               </div>
@@ -438,55 +419,54 @@ const HeicToJpgPage = () => {
         <section className="section-padding bg-gray-50 dark:bg-gray-900">
           <div className="container-custom">
             <div className="max-w-7xl mx-auto prose prose-lg dark:prose-invert">
-              <h2 className="heading-2 mb-6">Complete Guide to Converting HEIC to JPG</h2>
+              <h2 className="heading-2 mb-6">Complete Guide to Converting ICO to PNG</h2>
               
               <p className="text-body mb-6">
-                HEIC (High Efficiency Image Container) is Apple's modern image format used by default 
-                on iPhones and iPads. While HEIC offers excellent compression, it's not universally 
-                supported. Converting HEIC to JPG ensures compatibility with all devices and platforms.
+                ICO (Icon) files are Windows icon format commonly used for application icons and favicons. 
+                However, ICO files have limited browser support and are not ideal for modern web use, 
+                making PNG conversion essential for broader compatibility and better quality.
               </p>
 
-              <h3 className="heading-3 mb-4">What is HEIC Format?</h3>
+              <h3 className="heading-3 mb-4">What is ICO Format?</h3>
               <p className="text-body mb-6">
-                HEIC is Apple's modern image format that provides superior compression compared to JPEG. 
-                It's the default format for photos taken on iPhones and iPads running iOS 11 or later. 
-                While HEIC offers better quality and smaller file sizes, it's not supported by all 
-                devices and applications, making JPG conversion necessary for universal compatibility.
+                ICO is a Windows icon format that can contain multiple images of different sizes (16x16, 32x32, 48x48, etc.) 
+                in a single file. It's primarily used for application icons and favicons. However, ICO files have limited 
+                browser support and are not ideal for modern web use, making PNG conversion necessary for universal compatibility.
               </p>
 
-              <h3 className="heading-3 mb-4">Why Convert HEIC to JPG?</h3>
+              <h3 className="heading-3 mb-4">Why Convert ICO to PNG?</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li><strong>Universal Compatibility:</strong> JPG is supported by all devices and platforms</li>
-                <li><strong>Easy Sharing:</strong> Works with email, social media, and messaging apps</li>
-                <li><strong>Web Compatibility:</strong> Displays correctly on all websites and browsers</li>
-                <li><strong>Legacy Support:</strong> Works with older software and devices</li>
+                <li><strong>Universal Compatibility:</strong> PNG is supported by all devices and browsers</li>
+                <li><strong>Lossless Quality:</strong> No quality loss during conversion</li>
+                <li><strong>Transparency Support:</strong> Preserves alpha channels and transparency</li>
+                <li><strong>Better Quality:</strong> PNG provides superior image quality compared to ICO</li>
               </ul>
 
-              <h3 className="heading-3 mb-4">How Our HEIC to JPG Converter Works</h3>
+              <h3 className="heading-3 mb-4">How Our ICO to PNG Converter Works</h3>
               <p className="text-body mb-6">
-                Our converter uses advanced Sharp and Pillow libraries to ensure high-quality conversion. 
-                The process involves decoding the HEIC file, applying quality optimization, and encoding 
-                to JPG format while preserving maximum visual fidelity. You can convert single files or 
-                batch process up to 20 HEIC files simultaneously for maximum efficiency.
+                Our converter uses advanced Sharp library to ensure high-quality conversion. 
+                The process involves decoding the ICO file and encoding to PNG format while preserving 
+                maximum visual fidelity and transparency. You can convert single files or 
+                batch process up to 20 ICO files simultaneously for maximum efficiency.
               </p>
 
-              <h3 className="heading-3 mb-4">Quality Settings Explained</h3>
+              <h3 className="heading-3 mb-4">Lossless Conversion</h3>
               <p className="text-body mb-6">
-                Our tool offers customizable quality settings from 10% to 100%:
+                PNG is a lossless format, meaning no quality is lost during conversion:
               </p>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li><strong>90-100%:</strong> Highest quality, larger file size</li>
-                <li><strong>70-89%:</strong> Good balance of quality and size</li>
-                <li><strong>50-69%:</strong> Moderate compression, smaller files</li>
-                <li><strong>10-49%:</strong> High compression, smallest files</li>
+                <li><strong>Perfect Quality:</strong> No compression artifacts or quality loss</li>
+                <li><strong>Transparency Preserved:</strong> Alpha channels and transparency maintained</li>
+                <li><strong>Color Accuracy:</strong> All colors and details preserved exactly</li>
+                <li><strong>Professional Grade:</strong> Suitable for professional and archival use</li>
               </ul>
 
               <h3 className="heading-3 mb-4">Best Practices</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li>Use 85-95% quality for professional images</li>
-                <li>Use 70-80% quality for web images and social media</li>
-                <li>Use 50-70% quality for thumbnails and previews</li>
-                <li>Always keep original HEIC files as backup</li>
+                <li>Use PNG for icons with transparency or sharp edges</li>
+                <li>Use PNG for logos, graphics, and line art</li>
+                <li>Use PNG for images that need perfect quality preservation</li>
+                <li>Consider file size for web use - PNG can be larger than JPG</li>
               </ul>
             </div>
           </div>
@@ -500,9 +480,9 @@ const HeicToJpgPage = () => {
               
               <div className="space-y-6">
                 <div className="card p-6">
-                  <h3 className="heading-4 mb-3">Is HEIC to JPG conversion free?</h3>
+                  <h3 className="heading-4 mb-3">Is ICO to PNG conversion free?</h3>
                   <p className="text-body">
-                    Yes, our HEIC to JPG converter is completely free to use with no hidden costs, 
+                    Yes, our ICO to PNG converter is completely free to use with no hidden costs, 
                     watermarks, or limitations. You can convert unlimited files without registration.
                   </p>
                 </div>
@@ -510,7 +490,7 @@ const HeicToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">What is the maximum file size I can convert?</h3>
                   <p className="text-body">
-                    You can convert HEIC files up to 50MB in size. For larger files, consider 
+                    You can convert AVIF files up to 50MB in size. For larger files, consider 
                     compressing them first or contact our support team for assistance.
                   </p>
                 </div>
@@ -518,7 +498,7 @@ const HeicToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">How long does conversion take?</h3>
                   <p className="text-body">
-                    Most HEIC to JPG conversions complete in under 3 seconds. Processing time 
+                    Most ICO to PNG conversions complete in under 3 seconds. Processing time 
                     depends on file size and current server load.
                   </p>
                 </div>
@@ -542,7 +522,7 @@ const HeicToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">Can I convert multiple files at once?</h3>
                   <p className="text-body">
-                    Yes! Our converter supports batch processing of up to 20 HEIC files simultaneously. 
+                    Yes! Our converter supports batch processing of up to 20 AVIF files simultaneously. 
                     Simply select "Batch" mode, upload multiple files, and convert them all at once. 
                     Each file is processed individually to ensure optimal quality.
                   </p>
@@ -556,4 +536,5 @@ const HeicToJpgPage = () => {
   );
 };
 
-export default HeicToJpgPage;
+export default IcoToPngPage;
+

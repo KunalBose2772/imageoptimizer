@@ -86,6 +86,8 @@ const MegaMenu = ({ isOpen, onClose }) => {
         { name: 'SVG to AVIF', href: '/image-tools/svg-to-avif', popular: true },
         { name: 'TIFF to JPG', href: '/image-tools/tiff-to-jpg', popular: true },
         { name: 'TIFF to PNG', href: '/image-tools/tiff-to-png', popular: true },
+        { name: 'TIFF to WebP', href: '/image-tools/tiff-to-webp', popular: true },
+        { name: 'ICO to PNG', href: '/image-tools/ico-to-png', popular: true },
         { name: 'JPG to PNG', href: '/image-tools/jpg-to-png', popular: false },
         { name: 'PNG to JPG', href: '/image-tools/png-to-jpg', popular: false },
         { name: 'JPG to WebP', href: '/image-tools/jpg-to-webp', popular: false },
