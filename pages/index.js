@@ -814,6 +814,7 @@ const HomePage = () => {
                     <a href="/image-tools/avif-to-webp" className="text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors">AVIF to WEBP</a>
                     <a href="/image-tools/jpg-to-avif" className="text-gray-600 dark:text-gray-400 hover:text-orange-500 transition-colors">JPG to AVIF</a>
                     <a href="/image-tools/png-to-avif" className="text-gray-600 dark:text-gray-400 hover:text-purple-500 transition-colors">PNG to AVIF</a>
+                    <a href="/image-tools/webp-to-avif" className="text-gray-600 dark:text-gray-400 hover:text-cyan-500 transition-colors">WEBP to AVIF</a>
                     <a href="/image-tools/heic-to-jpg" className="text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors">HEIC to JPG</a>
                     <a href="/image-tools/jpg-to-png" className="text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors">JPG to PNG</a>
                     <a href="/image-tools/png-to-webp" className="text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors">PNG to WebP</a>

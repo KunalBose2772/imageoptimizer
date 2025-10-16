@@ -10,18 +10,27 @@ import {
   Globe, 
   Zap,
   ChevronRight,
-  Star
+  Star,
+  ArrowRight,
+  Grid3X3
 } from 'lucide-react';
 
 const MegaMenu = ({ isOpen, onClose }) => {
   const [activeCategory, setActiveCategory] = useState('image');
+  const [showAllTools, setShowAllTools] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
       setActiveCategory('image'); // Always start with image tools
+      setShowAllTools(false); // Reset to popular tools view
     }
   }, [isOpen]);
+
+  // Reset to popular tools when switching categories
+  useEffect(() => {
+    setShowAllTools(false);
+  }, [activeCategory]);
 
   // Handle mouse leave to close menu with proper delay
   const handleMouseLeave = () => {
@@ -44,15 +53,31 @@ const MegaMenu = ({ isOpen, onClose }) => {
       name: 'Image Tools',
       icon: Image,
       color: 'from-blue-500 to-cyan-500',
-      tools: [
+      popularTools: [
         { name: 'AVIF to JPG', href: '/image-tools/avif-to-jpg', popular: true },
         { name: 'AVIF to PNG', href: '/image-tools/avif-to-png', popular: true },
         { name: 'AVIF to WEBP', href: '/image-tools/avif-to-webp', popular: true },
         { name: 'JPG to AVIF', href: '/image-tools/jpg-to-avif', popular: true },
         { name: 'PNG to AVIF', href: '/image-tools/png-to-avif', popular: true },
-        { name: 'HEIC to JPG', href: '/image-tools/heic-to-jpg', popular: false },
+        { name: 'HEIC to JPG', href: '/image-tools/heic-to-jpg', popular: true },
+      ],
+      allTools: [
+        { name: 'AVIF to JPG', href: '/image-tools/avif-to-jpg', popular: true },
+        { name: 'AVIF to PNG', href: '/image-tools/avif-to-png', popular: true },
+        { name: 'AVIF to WEBP', href: '/image-tools/avif-to-webp', popular: true },
+        { name: 'JPG to AVIF', href: '/image-tools/jpg-to-avif', popular: true },
+        { name: 'PNG to AVIF', href: '/image-tools/png-to-avif', popular: true },
+        { name: 'HEIC to JPG', href: '/image-tools/heic-to-jpg', popular: true },
         { name: 'JPG to PNG', href: '/image-tools/jpg-to-png', popular: false },
+        { name: 'PNG to JPG', href: '/image-tools/png-to-jpg', popular: false },
+        { name: 'JPG to WebP', href: '/image-tools/jpg-to-webp', popular: false },
         { name: 'PNG to WebP', href: '/image-tools/png-to-webp', popular: false },
+        { name: 'WebP to JPG', href: '/image-tools/webp-to-jpg', popular: false },
+        { name: 'WebP to PNG', href: '/image-tools/webp-to-png', popular: false },
+        { name: 'WebP to AVIF', href: '/image-tools/webp-to-avif', popular: false },
+        { name: 'BMP to JPG', href: '/image-tools/bmp-to-jpg', popular: false },
+        { name: 'BMP to PNG', href: '/image-tools/bmp-to-png', popular: false },
+        { name: 'BMP to WebP', href: '/image-tools/bmp-to-webp', popular: false },
         { name: 'Image Resizer', href: '/image-tools/image-resizer', popular: false },
         { name: 'Image Cropper', href: '/image-tools/image-cropper', popular: false },
         { name: 'Rotate Image', href: '/image-tools/rotate-image', popular: false },
@@ -64,7 +89,11 @@ const MegaMenu = ({ isOpen, onClose }) => {
       name: 'PDF Tools',
       icon: FileText,
       color: 'from-purple-500 to-pink-500',
-      tools: [
+      popularTools: [
+        { name: 'Merge PDF', href: '/pdf-tools/merge-pdf', popular: true },
+        { name: 'PDF to Word', href: '/pdf-tools/pdf-to-word', popular: true },
+      ],
+      allTools: [
         { name: 'Merge PDF', href: '/pdf-tools/merge-pdf', popular: true },
         { name: 'PDF to Word', href: '/pdf-tools/pdf-to-word', popular: true },
         { name: 'PDF to JPG', href: '/pdf-tools/pdf-to-jpg', popular: false },
@@ -80,7 +109,11 @@ const MegaMenu = ({ isOpen, onClose }) => {
       name: 'Video Tools',
       icon: Video,
       color: 'from-red-500 to-orange-500',
-      tools: [
+      popularTools: [
+        { name: 'MP4 to GIF', href: '/video-tools/mp4-to-gif', popular: true },
+        { name: 'Video Compressor', href: '/video-tools/video-compressor', popular: true },
+      ],
+      allTools: [
         { name: 'MP4 to GIF', href: '/video-tools/mp4-to-gif', popular: true },
         { name: 'Video Compressor', href: '/video-tools/video-compressor', popular: true },
         { name: 'MP4 to AVI', href: '/video-tools/mp4-to-avi', popular: false },
@@ -96,7 +129,11 @@ const MegaMenu = ({ isOpen, onClose }) => {
       name: 'Audio Tools',
       icon: Music,
       color: 'from-green-500 to-teal-500',
-      tools: [
+      popularTools: [
+        { name: 'MP3 Converter', href: '/audio-tools/mp3-converter', popular: true },
+        { name: 'Audio Compressor', href: '/audio-tools/audio-compressor', popular: true },
+      ],
+      allTools: [
         { name: 'MP3 Converter', href: '/audio-tools/mp3-converter', popular: true },
         { name: 'Audio Compressor', href: '/audio-tools/audio-compressor', popular: true },
         { name: 'WAV to MP3', href: '/audio-tools/wav-to-mp3', popular: false },
@@ -112,7 +149,11 @@ const MegaMenu = ({ isOpen, onClose }) => {
       name: 'Archive Tools',
       icon: Archive,
       color: 'from-yellow-500 to-orange-500',
-      tools: [
+      popularTools: [
+        { name: 'ZIP Creator', href: '/archive-tools/zip-creator', popular: true },
+        { name: 'ZIP Extractor', href: '/archive-tools/zip-extractor', popular: true },
+      ],
+      allTools: [
         { name: 'ZIP Creator', href: '/archive-tools/zip-creator', popular: true },
         { name: 'ZIP Extractor', href: '/archive-tools/zip-extractor', popular: true },
         { name: 'RAR to ZIP', href: '/archive-tools/rar-to-zip', popular: false },
@@ -128,7 +169,11 @@ const MegaMenu = ({ isOpen, onClose }) => {
       name: 'AI Tools',
       icon: Brain,
       color: 'from-pink-500 to-purple-500',
-      tools: [
+      popularTools: [
+        { name: 'Remove Background', href: '/ai-tools/remove-background', popular: true },
+        { name: 'AI Image Upscaler', href: '/ai-tools/ai-image-upscaler', popular: true },
+      ],
+      allTools: [
         { name: 'Remove Background', href: '/ai-tools/remove-background', popular: true },
         { name: 'AI Image Upscaler', href: '/ai-tools/ai-image-upscaler', popular: true },
         { name: 'AI Image Generator', href: '/ai-tools/ai-image-generator', popular: false },
@@ -144,7 +189,11 @@ const MegaMenu = ({ isOpen, onClose }) => {
       name: 'Web Tools',
       icon: Globe,
       color: 'from-cyan-500 to-blue-500',
-      tools: [
+      popularTools: [
+        { name: 'QR Generator', href: '/web-tools/qr-generator', popular: true },
+        { name: 'URL Shortener', href: '/web-tools/url-shortener', popular: true },
+      ],
+      allTools: [
         { name: 'QR Generator', href: '/web-tools/qr-generator', popular: true },
         { name: 'URL Shortener', href: '/web-tools/url-shortener', popular: true },
         { name: 'Password Generator', href: '/web-tools/password-generator', popular: false },
@@ -160,6 +209,7 @@ const MegaMenu = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const activeCategoryData = categories.find(cat => cat.id === activeCategory);
+  const toolsToShow = showAllTools ? activeCategoryData?.allTools : activeCategoryData?.popularTools;
 
   return (
     <div 
@@ -204,7 +254,7 @@ const MegaMenu = ({ isOpen, onClose }) => {
                           {category.name}
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {category.tools.length} tools
+                          {category.allTools.length} tools
                         </div>
                       </div>
                     </button>
@@ -228,42 +278,68 @@ const MegaMenu = ({ isOpen, onClose }) => {
                       {activeCategoryData.name}
                     </h2>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {activeCategoryData.tools.length} tools available
+                      {activeCategoryData.allTools.length} tools available
                     </p>
                   </div>
                 </div>
 
                 {/* Tools Grid - Responsive Columns */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {activeCategoryData.tools.map((tool, index) => (
-                    <Link
-                      key={tool.name}
-                      href={tool.href}
-                      onClick={onClose}
-                      className="group p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 hover:shadow-md transition-all duration-200 hover:bg-primary-50 dark:hover:bg-primary-900/20"
-                      style={{
-                        animationDelay: `${index * 30}ms`,
-                        animation: 'fadeInUp 0.3s ease-out forwards'
-                      }}
+                <div className="space-y-4">
+                  {/* View All Toggle Button */}
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      {showAllTools ? 'All Tools' : 'Popular Tools'}
+                    </h3>
+                    <button
+                      onClick={() => setShowAllTools(!showAllTools)}
+                      className="flex items-center space-x-2 px-3 py-1.5 text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-all duration-200"
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
-                              {tool.name}
-                            </span>
-                            {tool.popular && (
-                              <Star className="w-3 h-3 text-yellow-500 flex-shrink-0" />
-                            )}
+                      <Grid3X3 className="w-4 h-4" />
+                      <span>{showAllTools ? 'Show Popular' : 'View All'}</span>
+                      <ArrowRight className={`w-3 h-3 transition-transform duration-200 ${showAllTools ? 'rotate-180' : ''}`} />
+                    </button>
+                  </div>
+
+                  {/* Tools Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 max-h-80 overflow-y-auto">
+                    {toolsToShow?.map((tool, index) => (
+                      <Link
+                        key={tool.name}
+                        href={tool.href}
+                        onClick={onClose}
+                        className="group p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 hover:shadow-md transition-all duration-200 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+                        style={{
+                          animationDelay: `${index * 30}ms`,
+                          animation: 'fadeInUp 0.3s ease-out forwards'
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
+                                {tool.name}
+                              </span>
+                              {tool.popular && (
+                                <Star className="w-3 h-3 text-yellow-500 flex-shrink-0" />
+                              )}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              {tool.popular ? 'Popular' : 'Free Tool'}
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {tool.popular ? 'Popular' : 'Free Tool'}
-                          </div>
+                          <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all duration-200 flex-shrink-0" />
                         </div>
-                        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all duration-200 flex-shrink-0" />
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    ))}
+                  </div>
+
+                  {/* Category Stats */}
+                  <div className="text-xs text-gray-500 dark:text-gray-400 text-center pt-2 border-t border-gray-200 dark:border-gray-700">
+                    {showAllTools 
+                      ? `Showing all ${activeCategoryData?.allTools?.length || 0} tools` 
+                      : `Showing ${activeCategoryData?.popularTools?.length || 0} popular tools of ${activeCategoryData?.allTools?.length || 0} total`
+                    }
+                  </div>
                 </div>
               </div>
             )}

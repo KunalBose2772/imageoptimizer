@@ -458,13 +458,101 @@
   --page-primary-dark: #CC0066;
 }
 
+  .page-theme-cyan {
+    --page-primary: #00B4D8;
+    --page-primary-hover: #0096C7;
+    --page-primary-light: #E6F7FF;
+    --page-primary-dark: #0077B6;
+  }
+
+  .page-theme-emerald {
+    --page-primary: #10B981;
+    --page-primary-hover: #059669;
+    --page-primary-light: #ECFDF5;
+    --page-primary-dark: #047857;
+  }
+
+  .page-theme-teal {
+    --page-primary: #14B8A6;
+    --page-primary-hover: #0D9488;
+    --page-primary-light: #F0FDFA;
+    --page-primary-dark: #0F766E;
+  }
+
+  .page-theme-lime {
+    --page-primary: #84CC16;
+    --page-primary-hover: #65A30D;
+    --page-primary-light: #F7FEE7;
+    --page-primary-dark: #4D7C0F;
+  }
+
+  .page-theme-indigo {
+    --page-primary: #6366F1;
+    --page-primary-hover: #4F46E5;
+    --page-primary-light: #EEF2FF;
+    --page-primary-dark: #4338CA;
+  }
+
+  .page-theme-rose {
+    --page-primary: #F43F5E;
+    --page-primary-hover: #E11D48;
+    --page-primary-light: #FFF1F2;
+    --page-primary-dark: #BE123C;
+  }
+
+  .page-theme-violet {
+    --page-primary: #8B5CF6;
+    --page-primary-hover: #7C3AED;
+    --page-primary-light: #F5F3FF;
+    --page-primary-dark: #6D28D9;
+  }
+
+  .page-theme-slate {
+    --page-primary: #64748B;
+    --page-primary-hover: #475569;
+    --page-primary-light: #F8FAFC;
+    --page-primary-dark: #334155;
+  }
+
+  .page-theme-amber {
+    --page-primary: #F59E0B;
+    --page-primary-hover: #D97706;
+    --page-primary-light: #FFFBEB;
+    --page-primary-dark: #B45309;
+  }
+
+  .page-theme-sky {
+    --page-primary: #0EA5E9;
+    --page-primary-hover: #0284C7;
+    --page-primary-light: #F0F9FF;
+    --page-primary-dark: #0369A1;
+  }
+
+  .page-theme-fuchsia {
+    --page-primary: #D946EF;
+    --page-primary-hover: #C026D3;
+    --page-primary-light: #FDF4FF;
+    --page-primary-dark: #A21CAF;
+  }
+
 /* Dynamic button styling based on page theme */
 .page-theme-blue .btn-primary-dynamic,
 .page-theme-purple .btn-primary-dynamic,
 .page-theme-green .btn-primary-dynamic,
 .page-theme-red .btn-primary-dynamic,
 .page-theme-orange .btn-primary-dynamic,
-.page-theme-pink .btn-primary-dynamic {
+.page-theme-pink .btn-primary-dynamic,
+.page-theme-cyan .btn-primary-dynamic,
+.page-theme-emerald .btn-primary-dynamic,
+.page-theme-teal .btn-primary-dynamic,
+.page-theme-lime .btn-primary-dynamic,
+.page-theme-indigo .btn-primary-dynamic,
+.page-theme-rose .btn-primary-dynamic,
+.page-theme-violet .btn-primary-dynamic,
+.page-theme-slate .btn-primary-dynamic,
+.page-theme-amber .btn-primary-dynamic,
+.page-theme-sky .btn-primary-dynamic,
+.page-theme-fuchsia .btn-primary-dynamic {
   background-color: var(--page-primary) !important;
   color: white !important;
   transition: all 0.3s ease;
@@ -476,7 +564,8 @@
 .page-theme-green .btn-primary-dynamic:hover,
 .page-theme-red .btn-primary-dynamic:hover,
 .page-theme-orange .btn-primary-dynamic:hover,
-.page-theme-pink .btn-primary-dynamic:hover {
+.page-theme-pink .btn-primary-dynamic:hover,
+.page-theme-cyan .btn-primary-dynamic:hover {
   background-color: var(--page-primary-hover) !important;
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -487,7 +576,8 @@
 .page-theme-green .btn-primary-dynamic:active,
 .page-theme-red .btn-primary-dynamic:active,
 .page-theme-orange .btn-primary-dynamic:active,
-.page-theme-pink .btn-primary-dynamic:active {
+.page-theme-pink .btn-primary-dynamic:active,
+.page-theme-cyan .btn-primary-dynamic:active {
   transform: translateY(0);
 }
 
@@ -496,7 +586,8 @@
 .page-theme-green .btn-primary-dynamic:focus,
 .page-theme-red .btn-primary-dynamic:focus,
 .page-theme-orange .btn-primary-dynamic:focus,
-.page-theme-pink .btn-primary-dynamic:focus {
+.page-theme-pink .btn-primary-dynamic:focus,
+.page-theme-cyan .btn-primary-dynamic:focus {
   background-color: var(--page-primary) !important;
   outline: none;
   box-shadow: 0 0 0 3px var(--page-primary-light);
@@ -507,7 +598,8 @@
 .page-theme-green .btn-primary-dynamic:disabled,
 .page-theme-red .btn-primary-dynamic:disabled,
 .page-theme-orange .btn-primary-dynamic:disabled,
-.page-theme-pink .btn-primary-dynamic:disabled {
+.page-theme-pink .btn-primary-dynamic:disabled,
+.page-theme-cyan .btn-primary-dynamic:disabled {
   background-color: var(--page-primary) !important;
   opacity: 0.5;
 }
@@ -518,7 +610,8 @@
 .page-theme-green button.btn-primary-dynamic,
 .page-theme-red button.btn-primary-dynamic,
 .page-theme-orange button.btn-primary-dynamic,
-.page-theme-pink button.btn-primary-dynamic {
+.page-theme-pink button.btn-primary-dynamic,
+.page-theme-cyan button.btn-primary-dynamic {
   background-color: var(--page-primary) !important;
   color: white !important;
 }
@@ -731,6 +824,149 @@
 
 .mega-menu-shine:hover::before {
   left: 100%;
+}
+
+.convert-button-cyan {
+  background-color: #00B4D8 !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-cyan:hover {
+  background-color: #0096C7 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(0, 180, 216, 0.3) !important;
+}
+
+.convert-button-emerald {
+  background-color: #10B981 !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-emerald:hover {
+  background-color: #059669 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3) !important;
+}
+
+.convert-button-teal {
+  background-color: #14B8A6 !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-teal:hover {
+  background-color: #0D9488 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(20, 184, 166, 0.3) !important;
+}
+
+.convert-button-lime {
+  background-color: #84CC16 !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-lime:hover {
+  background-color: #65A30D !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(132, 204, 22, 0.3) !important;
+}
+
+.convert-button-indigo {
+  background-color: #6366F1 !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-indigo:hover {
+  background-color: #4F46E5 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3) !important;
+}
+
+.convert-button-rose {
+  background-color: #F43F5E !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-rose:hover {
+  background-color: #E11D48 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(244, 63, 94, 0.3) !important;
+}
+
+.convert-button-violet {
+  background-color: #8B5CF6 !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-violet:hover {
+  background-color: #7C3AED !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3) !important;
+}
+
+.convert-button-slate {
+  background-color: #64748B !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-slate:hover {
+  background-color: #475569 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(100, 116, 139, 0.3) !important;
+}
+
+.convert-button-amber {
+  background-color: #F59E0B !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-amber:hover {
+  background-color: #D97706 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3) !important;
+}
+
+.convert-button-sky {
+  background-color: #0EA5E9 !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-sky:hover {
+  background-color: #0284C7 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(14, 165, 233, 0.3) !important;
+}
+
+.convert-button-fuchsia {
+  background-color: #D946EF !important;
+  color: white !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.convert-button-fuchsia:hover {
+  background-color: #C026D3 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 25px rgba(217, 70, 239, 0.3) !important;
 }
 
 /* Dynamic radio button styling */
