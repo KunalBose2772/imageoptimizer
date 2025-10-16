@@ -16,6 +16,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: `Method ${req.method} not allowed` });
   }
 
+  console.log('AVIF to JPG conversion request received');
+  
   try {
     // Parse the form data
     const form = formidable({
