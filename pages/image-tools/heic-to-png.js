@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const BmpToPngPage = () => {
+const HeicToPngPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
@@ -49,7 +49,7 @@ const BmpToPngPage = () => {
         const formData = new FormData();
         formData.append('file', file.file);
 
-        const response = await fetch('/api/image/bmp-to-png', {
+        const response = await fetch('/api/image/heic-to-png', {
           method: 'POST',
           body: formData,
         });
@@ -60,7 +60,7 @@ const BmpToPngPage = () => {
 
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
-        const filename = file.name.replace(/\.bmp$/i, '.png');
+        const filename = file.name.replace(/\.(heic|heif)$/i, '.png');
         
         setConvertedFiles([{
           url,
@@ -81,7 +81,7 @@ const BmpToPngPage = () => {
             const formData = new FormData();
             formData.append('file', file.file);
 
-            const response = await fetch('/api/image/bmp-to-png', {
+            const response = await fetch('/api/image/heic-to-png', {
               method: 'POST',
               body: formData,
             });
@@ -89,7 +89,7 @@ const BmpToPngPage = () => {
             if (response.ok) {
               const blob = await response.blob();
               const url = URL.createObjectURL(blob);
-              const filename = file.name.replace(/\.bmp$/i, '.png');
+              const filename = file.name.replace(/\.(heic|heif)$/i, '.png');
               
               convertedResults.push({
                 url,
@@ -175,11 +175,11 @@ const BmpToPngPage = () => {
 
   return (
     <Layout 
-      title="Convert BMP to PNG Online for Free"
-      description="Convert BMP images to PNG format instantly. Lossless conversion with transparency support. Free, fast, and secure."
-      keywords="BMP to PNG, convert BMP, BMP converter, image converter, free converter"
+      title="Convert HEIC to PNG Online for Free"
+      description="Convert HEIC images to PNG format instantly. Lossless conversion with universal compatibility. Free, fast, and secure."
+      keywords="HEIC to PNG, convert HEIC, HEIC converter, image converter, free converter"
     >
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-amber">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-emerald">
         {/* Hero Section with Upload */}
         <section className="section-padding bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
           <div className="container-custom">
@@ -187,18 +187,18 @@ const BmpToPngPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                 {/* Left Side - Content */}
                 <div className="text-center lg:text-left">
-                  <div className="inline-flex items-center space-x-2 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                  <div className="inline-flex items-center space-x-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
                     <Image className="w-4 h-4" />
                     <span>Image Conversion Tool</span>
                   </div>
                   
                   <h1 className="heading-1 mb-6">
-                    Convert BMP to PNG Online for Free
+                    Convert HEIC to PNG Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">
-                    Transform your BMP images to PNG format instantly. 
-                    Lossless conversion with transparency support. 
+                    Transform your HEIC images to PNG format instantly. 
+                    Lossless conversion with universal compatibility. 
                     No registration required, completely free.
                   </p>
                   
@@ -221,7 +221,7 @@ const BmpToPngPage = () => {
                 {/* Right Side - Upload Interface */}
                 <div className="glass-morphism-box no-shine rounded-3xl p-8">
                   <div className="text-center mb-6">
-                    <h2 className="heading-3 mb-2">Upload Your BMP Files</h2>
+                    <h2 className="heading-3 mb-2">Upload Your HEIC Files</h2>
                     <p className="text-gray-600 dark:text-gray-400">Drag & drop or click to browse</p>
                   </div>
                   
@@ -252,7 +252,7 @@ const BmpToPngPage = () => {
                   
                   <FileUploader
                     onFilesSelected={handleFileSelect}
-                    acceptedFileTypes={['image/bmp']}
+                    acceptedFileTypes={['image/heic', 'image/heif']}
                     maxFiles={conversionMode === 'batch' ? 20 : 1}
                     maxSize={50 * 1024 * 1024}
                     multiple={conversionMode === 'batch'}
@@ -286,7 +286,7 @@ const BmpToPngPage = () => {
                     <button
                       onClick={handleConvert}
                       disabled={!selectedFiles || selectedFiles.length === 0 || isConverting}
-                      className="convert-button-amber w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
+                      className="convert-button-emerald w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
                     >
                       {isConverting ? (
                         <>
@@ -355,9 +355,9 @@ const BmpToPngPage = () => {
           <div className="container-custom">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="heading-2 mb-4">Why Choose Our BMP to PNG Converter?</h2>
+                <h2 className="heading-2 mb-4">Why Choose Our HEIC to PNG Converter?</h2>
                 <p className="text-large">
-                  Experience the best BMP to PNG conversion with our advanced features.
+                  Experience the best HEIC to PNG conversion with our advanced features.
                 </p>
               </div>
               
@@ -368,7 +368,7 @@ const BmpToPngPage = () => {
                   </div>
                   <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Lightning Fast</h3>
                   <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
-                    Convert your BMP files to PNG in seconds with our optimized processing engine.
+                    Convert your HEIC files to PNG in seconds with our optimized processing engine.
                   </p>
                 </div>
                 
@@ -378,7 +378,7 @@ const BmpToPngPage = () => {
                   </div>
                   <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Batch Conversion</h3>
                   <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
-                    Convert up to 20 BMP files simultaneously with our batch processing feature.
+                    Convert up to 20 HEIC files simultaneously with our batch processing feature.
                   </p>
                 </div>
                 
@@ -398,7 +398,7 @@ const BmpToPngPage = () => {
                   </div>
                   <h3 className="heading-4 mb-4 group-hover:text-primary-500 transition-colors duration-300">Lossless Quality</h3>
                   <p className="text-body group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
-                    Perfect quality preservation with full transparency support for graphics and logos.
+                    PNG format preserves all image data without any quality loss or compression artifacts.
                   </p>
                 </div>
               </div>
@@ -410,54 +410,58 @@ const BmpToPngPage = () => {
         <section className="section-padding bg-gray-50 dark:bg-gray-900">
           <div className="container-custom">
             <div className="max-w-7xl mx-auto prose prose-lg dark:prose-invert">
-              <h2 className="heading-2 mb-6">Complete Guide to Converting BMP to PNG</h2>
+              <h2 className="heading-2 mb-6">Complete Guide to Converting HEIC to PNG</h2>
               
               <p className="text-body mb-6">
-                BMP (Bitmap) is an uncompressed image format that creates very large file sizes. 
-                Converting BMP to PNG provides lossless compression while maintaining perfect quality 
-                and adding transparency support, making it ideal for graphics, logos, and professional use.
+                HEIC (High Efficiency Image Container) is Apple's modern image format used by default 
+                on iPhones and iPads. While HEIC offers excellent compression, it's not universally 
+                supported. Converting HEIC to PNG ensures compatibility with all devices and platforms 
+                while maintaining lossless quality.
               </p>
 
-              <h3 className="heading-3 mb-4">What is BMP Format?</h3>
+              <h3 className="heading-3 mb-4">What is HEIC Format?</h3>
               <p className="text-body mb-6">
-                BMP (Bitmap) is an uncompressed raster graphics image file format that stores image data 
-                without any compression. While this ensures perfect quality, it results in extremely large 
-                file sizes, making BMP files impractical for most modern applications and web use.
+                HEIC is Apple's modern image format that provides superior compression compared to JPEG. 
+                It's the default format for photos taken on iPhones and iPads running iOS 11 or later. 
+                While HEIC offers better quality and smaller file sizes, it's not supported by all 
+                devices and applications, making PNG conversion necessary for universal compatibility.
               </p>
 
-              <h3 className="heading-3 mb-4">Why Convert BMP to PNG?</h3>
+              <h3 className="heading-3 mb-4">Why Convert HEIC to PNG?</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li><strong>Significant Size Reduction:</strong> PNG can reduce BMP file sizes by up to 80%</li>
-                <li><strong>Transparency Support:</strong> PNG supports alpha channels for transparent backgrounds</li>
-                <li><strong>Lossless Compression:</strong> No quality loss during conversion</li>
-                <li><strong>Universal Compatibility:</strong> PNG is supported by all modern devices and platforms</li>
+                <li><strong>Universal Compatibility:</strong> PNG is supported by all devices and platforms</li>
+                <li><strong>Lossless Quality:</strong> No compression artifacts or quality loss</li>
+                <li><strong>Transparency Support:</strong> Maintains alpha channels and transparency</li>
+                <li><strong>Professional Use:</strong> Ideal for graphics, logos, and detailed images</li>
+                <li><strong>Web Compatibility:</strong> Displays correctly on all websites and browsers</li>
               </ul>
 
-              <h3 className="heading-3 mb-4">How Our BMP to PNG Converter Works</h3>
+              <h3 className="heading-3 mb-4">How Our HEIC to PNG Converter Works</h3>
               <p className="text-body mb-6">
-                Our converter uses advanced Sharp and Pillow libraries to ensure perfect quality conversion. 
-                The process involves decoding the BMP file and encoding to PNG format while preserving 
-                all image data and adding lossless compression. You can convert single files or 
-                batch process up to 20 BMP files simultaneously for maximum efficiency.
+                Our converter uses advanced Sharp and Pillow libraries to ensure high-quality conversion. 
+                The process involves decoding the HEIC file and encoding to PNG format while preserving 
+                all image data without any loss. You can convert single files or batch process up to 
+                20 HEIC files simultaneously for maximum efficiency.
               </p>
 
-              <h3 className="heading-3 mb-4">Transparency and Quality</h3>
+              <h3 className="heading-3 mb-4">PNG vs Other Formats</h3>
               <p className="text-body mb-6">
-                Our converter perfectly preserves image quality while adding PNG's advanced features:
+                PNG is the ideal choice for HEIC conversion when you need:
               </p>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li>Lossless compression for perfect quality preservation</li>
-                <li>Transparency support for graphics and logos</li>
-                <li>Better compression than BMP without quality loss</li>
-                <li>Wide compatibility across all platforms and applications</li>
+                <li><strong>Lossless Quality:</strong> Perfect for professional images and graphics</li>
+                <li><strong>Transparency:</strong> Maintains alpha channels for overlays and logos</li>
+                <li><strong>Text and Graphics:</strong> Sharp edges without compression artifacts</li>
+                <li><strong>Universal Support:</strong> Works on all platforms and devices</li>
               </ul>
 
               <h3 className="heading-3 mb-4">Best Practices</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li>Use PNG for images with transparency or sharp edges</li>
-                <li>Use PNG for graphics and logos</li>
-                <li>Use PNG when you need lossless quality</li>
-                <li>Consider file size - PNG files are typically smaller than BMP</li>
+                <li>Use PNG for graphics, logos, and images with text</li>
+                <li>Use PNG when transparency is required</li>
+                <li>Use PNG for professional or archival purposes</li>
+                <li>Consider file size - PNG files are typically larger than JPEG</li>
+                <li>Always keep original HEIC files as backup</li>
               </ul>
             </div>
           </div>
@@ -471,9 +475,9 @@ const BmpToPngPage = () => {
               
               <div className="space-y-6">
                 <div className="card p-6">
-                  <h3 className="heading-4 mb-3">Is BMP to PNG conversion free?</h3>
+                  <h3 className="heading-4 mb-3">Is HEIC to PNG conversion free?</h3>
                   <p className="text-body">
-                    Yes, our BMP to PNG converter is completely free to use with no hidden costs, 
+                    Yes, our HEIC to PNG converter is completely free to use with no hidden costs, 
                     watermarks, or limitations. You can convert unlimited files without registration.
                   </p>
                 </div>
@@ -481,7 +485,7 @@ const BmpToPngPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">What is the maximum file size I can convert?</h3>
                   <p className="text-body">
-                    You can convert BMP files up to 50MB in size. For larger files, consider 
+                    You can convert HEIC files up to 50MB in size. For larger files, consider 
                     compressing them first or contact our support team for assistance.
                   </p>
                 </div>
@@ -489,7 +493,7 @@ const BmpToPngPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">How long does conversion take?</h3>
                   <p className="text-body">
-                    Most BMP to PNG conversions complete in under 3 seconds. Processing time 
+                    Most HEIC to PNG conversions complete in under 3 seconds. Processing time 
                     depends on file size and current server load.
                   </p>
                 </div>
@@ -503,17 +507,18 @@ const BmpToPngPage = () => {
                 </div>
 
                 <div className="card p-6">
-                  <h3 className="heading-4 mb-3">Does the converter preserve transparency?</h3>
+                  <h3 className="heading-4 mb-3">Will PNG files be larger than HEIC?</h3>
                   <p className="text-body">
-                    Yes! Our converter perfectly preserves transparency from BMP to PNG, making it 
-                    ideal for logos, graphics, and images with transparent backgrounds.
+                    Yes, PNG files are typically larger than HEIC files because PNG is lossless 
+                    while HEIC uses lossy compression. However, PNG ensures perfect quality and 
+                    universal compatibility.
                   </p>
                 </div>
 
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">Can I convert multiple files at once?</h3>
                   <p className="text-body">
-                    Yes! Our converter supports batch processing of up to 20 BMP files simultaneously. 
+                    Yes! Our converter supports batch processing of up to 20 HEIC files simultaneously. 
                     Simply select "Batch" mode, upload multiple files, and convert them all at once. 
                     Each file is processed individually to ensure optimal quality.
                   </p>
@@ -527,6 +532,6 @@ const BmpToPngPage = () => {
   );
 };
 
-export default BmpToPngPage;
+export default HeicToPngPage;
 
 

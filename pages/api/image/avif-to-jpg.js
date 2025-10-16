@@ -19,12 +19,12 @@ export default async function handler(req, res) {
   try {
     // Parse the form data
     const form = formidable({
-      uploadDir: './public/uploads',
+      uploadDir: '/tmp',
       keepExtensions: true,
       maxFileSize: 50 * 1024 * 1024, // 50MB
       filter: ({ mimetype }) => {
         // Only allow AVIF and HEIF files
-        return mimetype && mimetype.includes('image/avif') || mimetype.includes('image/heif');
+        return mimetype && (mimetype.includes('image/avif') || mimetype.includes('image/heif'));
       },
     });
 
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
     const originalName = uploadedFile.originalFilename || 'converted';
     const baseName = path.parse(originalName).name;
     const outputFilename = `${baseName}_converted.jpg`;
-    const outputPath = path.join('./public/uploads', outputFilename);
+    const outputPath = `/tmp/${outputFilename}`;
 
     // Convert AVIF/HEIF to JPG using Sharp
     await sharp(uploadedFile.filepath)

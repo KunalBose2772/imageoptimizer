@@ -152,7 +152,61 @@ const Header = () => {
               {/* Mobile Tools */}
               <div className="mb-6">
                 <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3">
-                  Tools by Category
+                  Popular Tools
+                </h3>
+                <div className="grid grid-cols-1 gap-2 mb-4">
+                  <Link
+                    href="/image-tools/avif-to-jpg"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">AVIF to JPG</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/avif-to-png"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">AVIF to PNG</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/heic-to-jpg"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">HEIC to JPG</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/heic-to-png"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">HEIC to PNG</span>
+                  </Link>
+                  <Link
+                    href="/pdf-tools/merge-pdf"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <FileText className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">Merge PDF</span>
+                  </Link>
+                  <Link
+                    href="/video-tools/mp4-to-gif"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Video className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">MP4 to GIF</span>
+                  </Link>
+                </div>
+                
+                <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3">
+                  All Categories
                 </h3>
                 <div className="space-y-2">
                   {toolCategories.map((category) => (

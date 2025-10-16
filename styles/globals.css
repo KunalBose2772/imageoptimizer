@@ -1518,3 +1518,14 @@
 .perspective-1000 {
   perspective: 1000px;
 }
+
+/* Mobile overflow prevention */
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+  
+  .overflow-visible {
+    overflow: hidden;
+  }
+}

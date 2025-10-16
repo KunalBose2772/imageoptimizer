@@ -35,25 +35,19 @@ export default async function handler(req, res) {
     }
 
     const uploadedFile = files.file[0];
-    const quality = parseInt(fields.quality?.[0] || '90');
-
-    // Validate quality parameter
-    if (quality < 10 || quality > 100) {
-      return res.status(400).json({ error: 'Quality must be between 10 and 100' });
-    }
 
     // Generate output filename
     const originalName = uploadedFile.originalFilename || 'converted';
     const baseName = path.parse(originalName).name;
-    const outputFilename = `${baseName}_converted.jpg`;
+    const outputFilename = `${baseName}_converted.png`;
     const outputPath = path.join('./public/uploads', outputFilename);
 
-    // Convert HEIC to JPG using Sharp
+    // Convert HEIC to PNG using Sharp
     await sharp(uploadedFile.filepath)
-      .jpeg({ 
-        quality: quality,
-        progressive: true,
-        mozjpeg: true // Use mozjpeg encoder for better compression
+      .png({ 
+        compressionLevel: 6, // Balance between compression speed and file size
+        adaptiveFiltering: true,
+        force: true
       })
       .toFile(outputPath);
 
@@ -78,7 +72,7 @@ export default async function handler(req, res) {
     }
 
     // Set response headers
-    res.setHeader('Content-Type', 'image/jpeg');
+    res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Disposition', `attachment; filename="${outputFilename}"`);
     res.setHeader('Content-Length', convertedBuffer.length);
 

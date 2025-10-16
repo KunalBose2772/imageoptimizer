@@ -60,6 +60,8 @@ const MegaMenu = ({ isOpen, onClose }) => {
         { name: 'JPG to AVIF', href: '/image-tools/jpg-to-avif', popular: true },
         { name: 'PNG to AVIF', href: '/image-tools/png-to-avif', popular: true },
         { name: 'HEIC to JPG', href: '/image-tools/heic-to-jpg', popular: true },
+        { name: 'HEIC to PNG', href: '/image-tools/heic-to-png', popular: true },
+        { name: 'HEIC to WEBP', href: '/image-tools/heic-to-webp', popular: true },
       ],
       allTools: [
         { name: 'AVIF to JPG', href: '/image-tools/avif-to-jpg', popular: true },
@@ -68,6 +70,7 @@ const MegaMenu = ({ isOpen, onClose }) => {
         { name: 'JPG to AVIF', href: '/image-tools/jpg-to-avif', popular: true },
         { name: 'PNG to AVIF', href: '/image-tools/png-to-avif', popular: true },
         { name: 'HEIC to JPG', href: '/image-tools/heic-to-jpg', popular: true },
+        { name: 'HEIC to PNG', href: '/image-tools/heic-to-png', popular: true },
         { name: 'JPG to PNG', href: '/image-tools/jpg-to-png', popular: false },
         { name: 'PNG to JPG', href: '/image-tools/png-to-jpg', popular: false },
         { name: 'JPG to WebP', href: '/image-tools/jpg-to-webp', popular: false },

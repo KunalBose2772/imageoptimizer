@@ -226,32 +226,37 @@ const Footer = () => {
                 <span>Supports 50+ Formats</span>
               </div>
             </div>
-            <div className="flex items-center space-x-6">
+            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
               <div className="flex items-center space-x-2 text-sm text-gray-400">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span>All systems operational</span>
               </div>
-              <div className="flex items-center space-x-4 text-xs text-gray-500">
-                <span>99.9% Uptime</span>
-                <span>•</span>
-                <span>SSL Secured</span>
-                <span>•</span>
-                <span>GDPR Compliant</span>
+              <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 text-xs text-gray-500">
+                <div className="flex items-center space-x-2">
+                  <span>99.9% Uptime</span>
+                  <span>•</span>
+                  <span>SSL Secured</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span>GDPR Compliant</span>
+                </div>
               </div>
-              <a
-                href="mailto:hello@imageoptimizer.in"
-                className="flex items-center space-x-2 text-sm text-gray-400 hover:text-primary-500 transition-colors duration-200"
-              >
-                <Mail className="w-4 h-4" />
-                <span>Contact</span>
-              </a>
-              <button
-                onClick={scrollToTop}
-                className="p-2 text-gray-400 hover:text-primary-500 transition-colors duration-200"
-                aria-label="Scroll to top"
-              >
-                <ArrowUp className="w-4 h-4" />
-              </button>
+              <div className="flex items-center space-x-4">
+                <a
+                  href="mailto:hello@imageoptimizer.in"
+                  className="flex items-center space-x-2 text-sm text-gray-400 hover:text-primary-500 transition-colors duration-200"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span>Contact</span>
+                </a>
+                <button
+                  onClick={scrollToTop}
+                  className="p-2 text-gray-400 hover:text-primary-500 transition-colors duration-200"
+                  aria-label="Scroll to top"
+                >
+                  <ArrowUp className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>

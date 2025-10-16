@@ -321,24 +321,24 @@ const HomePage = () => {
               <span>Trusted by 1M+ users worldwide</span>
             </div>
             
-            <h1 className="heading-1 mb-6 text-gray-900 dark:text-white drop-shadow-lg dark:drop-shadow-lg">
+            <h1 className="heading-1 max-[768px]:text-4xl max-[480px]:text-3xl mb-6 text-gray-900 dark:text-white drop-shadow-lg dark:drop-shadow-lg">
               The Ultimate All-in-One{' '}
               <span className="bg-gradient-to-r from-primary-500 to-purple-500 dark:from-primary-400 dark:to-purple-400 bg-clip-text text-transparent">
                 File Converter
               </span>
             </h1>
             
-            <p className="text-large mb-8 max-w-2xl mx-auto text-gray-700 dark:text-white/90 drop-shadow-md dark:drop-shadow-md">
+            <p className="text-large max-[768px]:text-xl max-[480px]:text-lg mb-8 max-w-2xl mx-auto text-gray-700 dark:text-white/90 drop-shadow-md dark:drop-shadow-md">
               300+ Free Tools for Images, Videos, PDFs, Audio & More. 
               Powered by AI technology for the fastest and most accurate conversions.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <button className="btn-primary text-lg px-8 py-4 flex items-center justify-center">
+              <button className="btn-primary text-lg max-[768px]:text-xl max-[768px]:px-10 max-[768px]:py-5 px-8 py-4 flex items-center justify-center">
                 Start Converting Now
-                <ArrowRight className="w-5 h-5 ml-2 inline-block" />
+                <ArrowRight className="w-5 h-5 max-[768px]:w-6 max-[768px]:h-6 ml-2 inline-block" />
               </button>
-              <button className="btn-outline text-lg px-8 py-4">
+              <button className="btn-outline text-lg max-[768px]:text-xl max-[768px]:px-10 max-[768px]:py-5 px-8 py-4">
                 View All Tools
               </button>
             </div>
@@ -436,7 +436,7 @@ const HomePage = () => {
           </div>
           
           <div className="text-center mt-12">
-            <a href="/tools" className="btn-outline">
+            <a href="/image-tools" className="btn-outline">
               View All 300+ Tools
             </a>
           </div>
@@ -447,50 +447,50 @@ const HomePage = () => {
       <section className="section-padding bg-white dark:bg-gray-800">
         <div className="container-custom">
           <div className="text-center mb-16">
-            <h2 className="heading-2 mb-4">
+            <h2 className="heading-2 max-[768px]:text-3xl max-[480px]:text-2xl mb-4">
               Why Choose ImageOptimizer.in?
             </h2>
-            <p className="text-large max-w-2xl mx-auto">
+            <p className="text-large max-[768px]:text-xl max-[480px]:text-lg max-w-2xl mx-auto">
               Experience the difference with our cutting-edge technology and user-first approach.
             </p>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Side - Feature Cards */}
-            <div className="space-y-6">
-              <div className="glass-morphism-box rounded-2xl p-6 flex items-start space-x-4 group">
-                <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-all duration-300">
-                  <Zap className="w-8 h-8 text-white drop-shadow-lg" />
+            <div className="space-y-6 max-[768px]:space-y-8">
+              <div className="glass-morphism-box rounded-2xl p-6 max-[768px]:p-8 flex items-start space-x-4 max-[768px]:space-x-6 group">
+                <div className="w-16 h-16 max-[768px]:w-20 max-[768px]:h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-all duration-300">
+                  <Zap className="w-8 h-8 max-[768px]:w-10 max-[768px]:h-10 text-white drop-shadow-lg" />
                 </div>
                 <div className="group-hover:translate-x-2 transition-transform duration-300">
-                  <h3 className="heading-4 mb-2 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors duration-300">Lightning Fast Processing</h3>
-                  <p className="text-body text-gray-600 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-200 transition-colors duration-300">
+                  <h3 className="heading-4 max-[768px]:text-2xl mb-2 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors duration-300">Lightning Fast Processing</h3>
+                  <p className="text-body max-[768px]:text-lg text-gray-600 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-200 transition-colors duration-300">
                     Our optimized infrastructure ensures your files are processed in under 3 seconds, 
                     making your workflow incredibly efficient.
                   </p>
                 </div>
               </div>
             
-              <div className="glass-morphism-box rounded-2xl p-6 flex items-start space-x-4 group">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-all duration-300">
-                  <Brain className="w-8 h-8 text-white drop-shadow-lg" />
+              <div className="glass-morphism-box rounded-2xl p-6 max-[768px]:p-8 flex items-start space-x-4 max-[768px]:space-x-6 group">
+                <div className="w-16 h-16 max-[768px]:w-20 max-[768px]:h-20 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-all duration-300">
+                  <Brain className="w-8 h-8 max-[768px]:w-10 max-[768px]:h-10 text-white drop-shadow-lg" />
                 </div>
                 <div className="group-hover:translate-x-2 transition-transform duration-300">
-                  <h3 className="heading-4 mb-2 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors duration-300">AI-Powered Technology</h3>
-                  <p className="text-body text-gray-600 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-200 transition-colors duration-300">
+                  <h3 className="heading-4 max-[768px]:text-2xl mb-2 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors duration-300">AI-Powered Technology</h3>
+                  <p className="text-body max-[768px]:text-lg text-gray-600 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-200 transition-colors duration-300">
                     Advanced AI algorithms provide superior image enhancement and processing capabilities 
                     that traditional tools simply can't match.
                   </p>
                 </div>
               </div>
               
-              <div className="glass-morphism-box rounded-2xl p-6 flex items-start space-x-4 group">
-                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-all duration-300">
-                  <Shield className="w-8 h-8 text-white drop-shadow-lg" />
+              <div className="glass-morphism-box rounded-2xl p-6 max-[768px]:p-8 flex items-start space-x-4 max-[768px]:space-x-6 group">
+                <div className="w-16 h-16 max-[768px]:w-20 max-[768px]:h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-all duration-300">
+                  <Shield className="w-8 h-8 max-[768px]:w-10 max-[768px]:h-10 text-white drop-shadow-lg" />
                 </div>
                 <div className="group-hover:translate-x-2 transition-transform duration-300">
-                  <h3 className="heading-4 mb-2 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors duration-300">100% Free Forever</h3>
-                  <p className="text-body text-gray-600 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-200 transition-colors duration-300">
+                  <h3 className="heading-4 max-[768px]:text-2xl mb-2 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors duration-300">100% Free Forever</h3>
+                  <p className="text-body max-[768px]:text-lg text-gray-600 dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-200 transition-colors duration-300">
                     All our tools are completely free with no hidden costs, watermarks, or limitations. 
                     No credit card required.
                   </p>
@@ -499,7 +499,7 @@ const HomePage = () => {
             </div>
             
             {/* Right Side - CardSwap */}
-            <div style={{ height: '450px', position: 'relative' }}>
+            <div className="relative h-[450px] max-[768px]:h-[400px] max-[768px]:overflow-hidden max-[768px]:flex max-[768px]:justify-center">
               <CardSwap
                 cardDistance={60}
                 verticalDistance={70}
