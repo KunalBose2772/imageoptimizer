@@ -24,10 +24,9 @@ const ImageCropperPage = () => {
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
   const [conversionMode, setConversionMode] = useState('single'); // 'single' or 'batch'
-  const [cropMode, setCropMode] = useState('square'); // 'square', 'circle', 'custom', 'social'
+  const [cropMode, setCropMode] = useState('free'); // 'free', 'square', 'custom'
   const [customWidth, setCustomWidth] = useState('');
   const [customHeight, setCustomHeight] = useState('');
-  const [socialTemplate, setSocialTemplate] = useState('instagram-square');
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
 
   const handleFileSelect = (files) => {
@@ -79,7 +78,6 @@ const ImageCropperPage = () => {
           cropMode: cropMode,
           customWidth: cropMode === 'custom' ? parseInt(customWidth) : undefined,
           customHeight: cropMode === 'custom' ? parseInt(customHeight) : undefined,
-          socialTemplate: cropMode === 'social' ? socialTemplate : undefined,
           maintainAspectRatio: maintainAspectRatio
         };
         
@@ -351,7 +349,17 @@ const ImageCropperPage = () => {
                         <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
                           Crop Mode
                         </label>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-3 gap-2">
+                          <button
+                            onClick={() => setCropMode('free')}
+                            className={`px-3 py-2 text-xs rounded-lg border transition-all ${
+                              cropMode === 'free'
+                                ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300'
+                                : 'border-gray-200 dark:border-gray-600 hover:border-teal-300 text-gray-700 dark:text-gray-300'
+                            }`}
+                          >
+                            Free Crop
+                          </button>
                           <button
                             onClick={() => setCropMode('square')}
                             className={`px-3 py-2 text-xs rounded-lg border transition-all ${
@@ -361,26 +369,6 @@ const ImageCropperPage = () => {
                             }`}
                           >
                             Square
-                          </button>
-                          <button
-                            onClick={() => setCropMode('circle')}
-                            className={`px-3 py-2 text-xs rounded-lg border transition-all ${
-                              cropMode === 'circle'
-                                ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300'
-                                : 'border-gray-200 dark:border-gray-600 hover:border-teal-300 text-gray-700 dark:text-gray-300'
-                            }`}
-                          >
-                            Circle
-                          </button>
-                          <button
-                            onClick={() => setCropMode('social')}
-                            className={`px-3 py-2 text-xs rounded-lg border transition-all ${
-                              cropMode === 'social'
-                                ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300'
-                                : 'border-gray-200 dark:border-gray-600 hover:border-teal-300 text-gray-700 dark:text-gray-300'
-                            }`}
-                          >
-                            Social Media
                           </button>
                           <button
                             onClick={() => setCropMode('custom')}
@@ -394,28 +382,6 @@ const ImageCropperPage = () => {
                           </button>
                         </div>
                       </div>
-
-                      {/* Social Media Templates */}
-                      {cropMode === 'social' && (
-                        <div className="mb-3">
-                          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
-                            Social Media Template
-                          </label>
-                          <select
-                            value={socialTemplate}
-                            onChange={(e) => setSocialTemplate(e.target.value)}
-                            className="w-full px-2 py-1 text-sm border border-gray-200 dark:border-gray-600 rounded focus:ring-1 focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:text-white"
-                          >
-                            <option value="instagram-square">Instagram Square (1080x1080)</option>
-                            <option value="instagram-story">Instagram Story (1080x1920)</option>
-                            <option value="facebook-cover">Facebook Cover (1200x630)</option>
-                            <option value="twitter-header">Twitter Header (1500x500)</option>
-                            <option value="linkedin-banner">LinkedIn Banner (1584x396)</option>
-                            <option value="youtube-thumbnail">YouTube Thumbnail (1280x720)</option>
-                            <option value="pinterest-pin">Pinterest Pin (1000x1500)</option>
-                          </select>
-                        </div>
-                      )}
 
                       {/* Input Fields */}
                       {cropMode === 'custom' && (
@@ -456,9 +422,8 @@ const ImageCropperPage = () => {
                           <div>
                             <h4 className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-1">Crop Instructions</h4>
                             <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
-                              <li>• <strong>Square:</strong> Perfect square crop (1:1 ratio)</li>
-                              <li>• <strong>Circle:</strong> Circular crop with transparent background</li>
-                              <li>• <strong>Social Media:</strong> Pre-defined templates for social platforms</li>
+                              <li>• <strong>Free Crop:</strong> Crop to any aspect ratio you want</li>
+                              <li>• <strong>Square:</strong> Crop to a perfect square (1:1 ratio)</li>
                               <li>• <strong>Custom Size:</strong> Crop to specific dimensions</li>
                             </ul>
                           </div>

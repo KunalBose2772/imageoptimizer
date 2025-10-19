@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import formidable from 'formidable';
 import fs from 'fs';
-import path from 'path';
 import sharp from 'sharp';
 
 export const config = {
@@ -10,8 +9,8 @@ export const config = {
   },
 };
 
-// Real background removal with proper edge detection and flood fill
-async function advancedBackgroundRemoval(imageBuffer, transparencyLevel) {
+// Create preview with scanning animation
+async function createScanningPreview(imageBuffer) {
   const image = sharp(imageBuffer);
   const metadata = await image.metadata();
   const { data, info } = await image.raw().toBuffer({ resolveWithObject: true });
@@ -20,62 +19,64 @@ async function advancedBackgroundRemoval(imageBuffer, transparencyLevel) {
   const height = info.height;
   const channels = info.channels;
   
-  console.log(`Processing ${width}x${height} image with ${channels} channels`);
-  
-  // Step 1: Convert to grayscale for better edge detection
-  const grayData = convertToGrayscale(data, width, height, channels);
-  console.log('Converted to grayscale');
-  
-  // Step 2: Apply Gaussian blur to reduce noise
-  const blurredData = applyGaussianBlur(grayData, width, height);
-  console.log('Applied Gaussian blur');
-  
-  // Step 3: Edge detection using Canny algorithm
-  const edges = await detectEdgesCanny(blurredData, width, height);
-  console.log('Canny edge detection completed');
-  
-  // Step 4: Find background using flood fill from corners
-  const backgroundMask = await findBackgroundFloodFill(data, width, height, channels, edges);
-  console.log('Background mask created using flood fill');
-  
-  // Step 5: Refine mask using morphological operations
-  const refinedMask = await refineMask(backgroundMask, width, height);
-  console.log('Mask refined');
-  
-  // Step 6: Create final image with transparency
-  const alphaValue = Math.round((transparencyLevel / 100) * 255);
-  const result = await applyTransparency(data, refinedMask, width, height, channels, alphaValue);
-  console.log('Transparency applied successfully');
-  
-  return result;
-}
-
-// Convert RGB to grayscale
-function convertToGrayscale(data, width, height, channels) {
+  // Convert to grayscale
   const grayData = new Uint8Array(width * height);
-  
   for (let i = 0; i < width * height; i++) {
     const pixelIndex = i * channels;
     const r = data[pixelIndex];
     const g = data[pixelIndex + 1];
     const b = data[pixelIndex + 2];
-    
-    // Use luminance formula for better grayscale conversion
     grayData[i] = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
   }
   
-  return grayData;
+  // Apply Gaussian blur
+  const blurredData = applyGaussianBlur(grayData, width, height);
+  
+  // Edge detection
+  const edges = await detectEdgesCanny(blurredData, width, height);
+  
+  // Find background using flood fill
+  const backgroundMask = await findBackgroundFloodFill(data, width, height, channels, edges);
+  
+  // Create preview image showing background detection
+  const previewData = Buffer.alloc(width * height * 4);
+  
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const srcIndex = (y * width + x) * channels;
+      const dstIndex = (y * width + x) * 4;
+      const maskIndex = y * width + x;
+      
+      // Copy original RGB
+      previewData[dstIndex] = data[srcIndex];         // R
+      previewData[dstIndex + 1] = data[srcIndex + 1]; // G
+      previewData[dstIndex + 2] = data[srcIndex + 2]; // B
+      
+      // Highlight background in red
+      if (backgroundMask[maskIndex] === 255) {
+        previewData[dstIndex] = 255;     // R (red)
+        previewData[dstIndex + 1] = 0;   // G
+        previewData[dstIndex + 2] = 0;   // B
+        previewData[dstIndex + 3] = 200; // A (semi-transparent)
+      } else {
+        previewData[dstIndex + 3] = 255; // A (opaque)
+      }
+    }
+  }
+  
+  return {
+    preview: await sharp(previewData, {
+      raw: { width, height, channels: 4 }
+    }).png().toBuffer(),
+    backgroundMask,
+    edges,
+    metadata: { width, height }
+  };
 }
 
-// Apply Gaussian blur to reduce noise
+// Apply Gaussian blur
 function applyGaussianBlur(data, width, height) {
-  const kernel = [
-    1, 4, 6, 4, 1,
-    4, 16, 24, 16, 4,
-    6, 24, 36, 24, 6,
-    4, 16, 24, 16, 4,
-    1, 4, 6, 4, 1
-  ];
+  const kernel = [1, 4, 6, 4, 1, 4, 16, 24, 16, 4, 6, 24, 36, 24, 6, 4, 16, 24, 16, 4, 1, 4, 6, 4, 1];
   const kernelSize = 5;
   const kernelSum = 256;
   
@@ -102,7 +103,6 @@ function applyGaussianBlur(data, width, height) {
 
 // Canny edge detection
 async function detectEdgesCanny(data, width, height) {
-  // Step 1: Apply Sobel operator
   const sobelX = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
   const sobelY = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
   
@@ -134,7 +134,7 @@ async function detectEdgesCanny(data, width, height) {
     }
   }
   
-  // Step 2: Non-maximum suppression
+  // Non-maximum suppression
   const suppressed = new Uint8Array(width * height);
   for (let y = 1; y < height - 1; y++) {
     for (let x = 1; x < width - 1; x++) {
@@ -142,11 +142,9 @@ async function detectEdgesCanny(data, width, height) {
       const mag = magnitude[index];
       const dir = direction[index];
       
-      // Convert angle to 0-180 range
       let angle = (dir * 180 / Math.PI) % 180;
       if (angle < 0) angle += 180;
       
-      // Determine neighbors based on gradient direction
       let neighbor1, neighbor2;
       if ((angle >= 0 && angle < 22.5) || (angle >= 157.5 && angle <= 180)) {
         neighbor1 = magnitude[index - 1];
@@ -168,7 +166,7 @@ async function detectEdgesCanny(data, width, height) {
     }
   }
   
-  // Step 3: Double threshold
+  // Double threshold
   const highThreshold = 50;
   const lowThreshold = 20;
   const edges = new Uint8Array(width * height);
@@ -368,98 +366,14 @@ async function findDominantBackgroundColors(samples) {
   return colors.slice(0, 3).map(cluster => cluster.average);
 }
 
-// Refine mask using morphological operations
-async function refineMask(mask, width, height) {
-  const refined = new Uint8Array(mask);
-  
-  // Erosion to remove noise
-  for (let y = 1; y < height - 1; y++) {
-    for (let x = 1; x < width - 1; x++) {
-      const index = y * width + x;
-      if (mask[index] === 255) {
-        let allBackground = true;
-        for (let dy = -1; dy <= 1; dy++) {
-          for (let dx = -1; dx <= 1; dx++) {
-            const neighborIndex = (y + dy) * width + (x + dx);
-            if (mask[neighborIndex] === 0) {
-              allBackground = false;
-              break;
-            }
-          }
-          if (!allBackground) break;
-        }
-        if (!allBackground) {
-          refined[index] = 0;
-        }
-      }
-    }
-  }
-  
-  // Dilation to fill gaps
-  for (let y = 1; y < height - 1; y++) {
-    for (let x = 1; x < width - 1; x++) {
-      const index = y * width + x;
-      if (refined[index] === 0) {
-        let hasBackgroundNeighbor = false;
-        for (let dy = -1; dy <= 1; dy++) {
-          for (let dx = -1; dx <= 1; dx++) {
-            const neighborIndex = (y + dy) * width + (x + dx);
-            if (refined[neighborIndex] === 255) {
-              hasBackgroundNeighbor = true;
-              break;
-            }
-          }
-          if (hasBackgroundNeighbor) break;
-        }
-        if (hasBackgroundNeighbor) {
-          refined[index] = 255;
-        }
-      }
-    }
-  }
-  
-  return refined;
-}
-
-
-// Apply transparency to the final image
-async function applyTransparency(data, mask, width, height, channels, alphaValue) {
-  const newData = Buffer.alloc(width * height * 4);
-  
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const srcIndex = (y * width + x) * channels;
-      const dstIndex = (y * width + x) * 4;
-      const maskIndex = y * width + x;
-      
-      // Copy RGB values
-      newData[dstIndex] = data[srcIndex];         // R
-      newData[dstIndex + 1] = data[srcIndex + 1]; // G
-      newData[dstIndex + 2] = data[srcIndex + 2]; // B
-      
-      // Set alpha based on mask
-      if (mask[maskIndex] === 0) {
-        // Background pixel
-        newData[dstIndex + 3] = alphaValue;
-      } else {
-        // Foreground pixel
-        newData[dstIndex + 3] = 255;
-      }
-    }
-  }
-  
-  return newData;
-}
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // Parse the form data
     const form = formidable({
-      maxFileSize: 50 * 1024 * 1024, // 50MB
+      maxFileSize: 50 * 1024 * 1024,
       filter: ({ mimetype }) => {
         return mimetype && mimetype.startsWith('image/');
       },
@@ -467,70 +381,35 @@ export default async function handler(req, res) {
 
     const [fields, files] = await form.parse(req);
     const file = files.file?.[0];
-    const transparencyLevel = parseInt(fields.transparencyLevel?.[0] || '100');
 
     if (!file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    console.log('🚀 Starting advanced background removal...');
-    console.log('Transparency level:', transparencyLevel);
+    console.log('Creating scanning preview...');
 
-    // Read the input image
     const inputBuffer = fs.readFileSync(file.filepath);
+    const result = await createScanningPreview(inputBuffer);
     
-    let processedImage;
+    // Convert preview to base64
+    const previewBase64 = result.preview.toString('base64');
     
-    try {
-      // Use advanced background removal
-      const rgbaData = await advancedBackgroundRemoval(inputBuffer, transparencyLevel);
-      
-      // Get image metadata
-      const image = sharp(inputBuffer);
-      const metadata = await image.metadata();
-      
-      // Create final image
-      processedImage = await sharp(rgbaData, {
-        raw: {
-          width: metadata.width,
-          height: metadata.height,
-          channels: 4
-        }
-      }).png({ quality: 95 }).toBuffer();
-      
-      console.log('✅ Background removal completed successfully');
-      
-    } catch (processingError) {
-      console.error('❌ Advanced processing failed:', processingError);
-      
-      // Fallback: simple conversion
-      processedImage = await sharp(inputBuffer).png().toBuffer();
-      console.log('⚠️ Using fallback processing');
-    }
-
-    // Set appropriate headers
-    res.setHeader('Content-Type', 'image/png');
-    res.setHeader('Content-Disposition', `attachment; filename="transparent_${Date.now()}.png"`);
-    res.setHeader('Content-Length', processedImage.length);
-
-    // Send the processed image
-    res.status(200).send(processedImage);
-
-    // Clean up temporary files
-    setTimeout(() => {
-      try {
-        if (fs.existsSync(file.filepath)) {
-          fs.unlinkSync(file.filepath);
-        }
-      } catch (cleanupError) {
-        console.error('Cleanup error:', cleanupError);
-      }
-    }, 1000);
+    // Calculate background percentage
+    const totalPixels = result.metadata.width * result.metadata.height;
+    const backgroundPixels = Array.from(result.backgroundMask).filter(pixel => pixel === 255).length;
+    const backgroundPercentage = Math.round((backgroundPixels / totalPixels) * 100);
+    
+    res.status(200).json({
+      preview: `data:image/png;base64,${previewBase64}`,
+      backgroundPercentage,
+      confidence: backgroundPercentage > 30 ? 'High' : backgroundPercentage > 15 ? 'Medium' : 'Low',
+      detected: backgroundPercentage > 10
+    });
 
   } catch (error) {
-    console.error('Transparency processing error:', error);
+    console.error('Preview creation error:', error);
     return res.status(500).json({ 
-      error: 'Internal server error',
+      error: 'Preview creation failed',
       details: error.message 
     });
   }

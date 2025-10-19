@@ -43,25 +43,39 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Width and height must be positive numbers' });
       }
       
+      // For exact dimensions, don't maintain aspect ratio unless specified
       if (maintainAspectRatio === 'true' || maintainAspectRatio === true) {
         const aspectRatio = originalWidth / originalHeight;
-        if (newWidth && !newHeight) {
-          newHeight = Math.round(newWidth / aspectRatio);
-        } else if (newHeight && !newWidth) {
-          newWidth = Math.round(newHeight * aspectRatio);
-        } else if (newWidth && newHeight) {
-          // Calculate which dimension to prioritize based on aspect ratio
-          const targetAspectRatio = newWidth / newHeight;
-          if (Math.abs(aspectRatio - targetAspectRatio) > 0.01) {
-            // Adjust to maintain original aspect ratio
-            if (aspectRatio > targetAspectRatio) {
-              newHeight = Math.round(newWidth / aspectRatio);
-            } else {
-              newWidth = Math.round(newHeight * aspectRatio);
-            }
+        const targetAspectRatio = newWidth / newHeight;
+        if (Math.abs(aspectRatio - targetAspectRatio) > 0.01) {
+          // Adjust to maintain original aspect ratio
+          if (aspectRatio > targetAspectRatio) {
+            newHeight = Math.round(newWidth / aspectRatio);
+          } else {
+            newWidth = Math.round(newHeight * aspectRatio);
           }
         }
       }
+    } else if (resizeMode === 'width') {
+      newWidth = parseInt(width) || 0;
+      
+      if (newWidth <= 0) {
+        return res.status(400).json({ error: 'Width must be a positive number' });
+      }
+      
+      // Calculate height to maintain aspect ratio
+      const aspectRatio = originalWidth / originalHeight;
+      newHeight = Math.round(newWidth / aspectRatio);
+    } else if (resizeMode === 'height') {
+      newHeight = parseInt(height) || 0;
+      
+      if (newHeight <= 0) {
+        return res.status(400).json({ error: 'Height must be a positive number' });
+      }
+      
+      // Calculate width to maintain aspect ratio
+      const aspectRatio = originalWidth / originalHeight;
+      newWidth = Math.round(newHeight * aspectRatio);
     } else if (resizeMode === 'percentage') {
       const scale = parseInt(percentage) / 100;
       if (scale <= 0 || scale > 5) {

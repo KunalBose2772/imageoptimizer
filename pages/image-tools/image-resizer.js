@@ -23,7 +23,7 @@ const ImageResizerPage = () => {
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
   const [conversionMode, setConversionMode] = useState('single'); // 'single' or 'batch'
-  const [resizeMode, setResizeMode] = useState('dimensions'); // 'dimensions', 'percentage', 'fit'
+  const [resizeMode, setResizeMode] = useState('percentage'); // 'percentage', 'width', 'height', 'dimensions', 'fit'
   const [width, setWidth] = useState('');
   const [height, setHeight] = useState('');
   const [percentage, setPercentage] = useState(100);
@@ -64,6 +64,16 @@ const ImageResizerPage = () => {
       return;
     }
 
+    if (resizeMode === 'width' && (!width || width <= 0)) {
+      toast.error('Please enter a valid width');
+      return;
+    }
+
+    if (resizeMode === 'height' && (!height || height <= 0)) {
+      toast.error('Please enter a valid height');
+      return;
+    }
+
     if (resizeMode === 'percentage' && (!percentage || percentage <= 0 || percentage > 500)) {
       toast.error('Please enter a valid percentage (1-500)');
       return;
@@ -86,8 +96,8 @@ const ImageResizerPage = () => {
         const requestData = { 
           file: base64File,
           resizeMode: resizeMode,
-          width: resizeMode === 'dimensions' || resizeMode === 'fit' ? parseInt(width) : undefined,
-          height: resizeMode === 'dimensions' || resizeMode === 'fit' ? parseInt(height) : undefined,
+          width: resizeMode === 'dimensions' || resizeMode === 'fit' || resizeMode === 'width' ? parseInt(width) : undefined,
+          height: resizeMode === 'dimensions' || resizeMode === 'fit' || resizeMode === 'height' ? parseInt(height) : undefined,
           percentage: resizeMode === 'percentage' ? parseInt(percentage) : undefined,
           maintainAspectRatio: maintainAspectRatio
         };
@@ -145,8 +155,8 @@ const ImageResizerPage = () => {
               body: JSON.stringify({ 
                 file: base64File,
                 resizeMode: resizeMode,
-                width: resizeMode === 'dimensions' || resizeMode === 'fit' ? parseInt(width) : undefined,
-                height: resizeMode === 'dimensions' || resizeMode === 'fit' ? parseInt(height) : undefined,
+                width: resizeMode === 'dimensions' || resizeMode === 'fit' || resizeMode === 'width' ? parseInt(width) : undefined,
+                height: resizeMode === 'dimensions' || resizeMode === 'fit' || resizeMode === 'height' ? parseInt(height) : undefined,
                 percentage: resizeMode === 'percentage' ? parseInt(percentage) : undefined,
                 maintainAspectRatio: maintainAspectRatio
               }),
@@ -362,17 +372,7 @@ const ImageResizerPage = () => {
                         <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
                           Resize Mode
                         </label>
-                        <div className="grid grid-cols-3 gap-2">
-                          <button
-                            onClick={() => setResizeMode('dimensions')}
-                            className={`px-3 py-2 text-xs rounded-lg border transition-all ${
-                              resizeMode === 'dimensions'
-                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
-                                : 'border-gray-200 dark:border-gray-600 hover:border-emerald-300 text-gray-700 dark:text-gray-300'
-                            }`}
-                          >
-                            Dimensions
-                          </button>
+                        <div className="grid grid-cols-2 gap-2">
                           <button
                             onClick={() => setResizeMode('percentage')}
                             className={`px-3 py-2 text-xs rounded-lg border transition-all ${
@@ -384,19 +384,39 @@ const ImageResizerPage = () => {
                             Percentage
                           </button>
                           <button
-                            onClick={() => setResizeMode('fit')}
+                            onClick={() => setResizeMode('width')}
                             className={`px-3 py-2 text-xs rounded-lg border transition-all ${
-                              resizeMode === 'fit'
+                              resizeMode === 'width'
                                 ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
                                 : 'border-gray-200 dark:border-gray-600 hover:border-emerald-300 text-gray-700 dark:text-gray-300'
                             }`}
                           >
-                            Fit to Size
+                            By Width
+                          </button>
+                          <button
+                            onClick={() => setResizeMode('height')}
+                            className={`px-3 py-2 text-xs rounded-lg border transition-all ${
+                              resizeMode === 'height'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
+                                : 'border-gray-200 dark:border-gray-600 hover:border-emerald-300 text-gray-700 dark:text-gray-300'
+                            }`}
+                          >
+                            By Height
+                          </button>
+                          <button
+                            onClick={() => setResizeMode('dimensions')}
+                            className={`px-3 py-2 text-xs rounded-lg border transition-all ${
+                              resizeMode === 'dimensions'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
+                                : 'border-gray-200 dark:border-gray-600 hover:border-emerald-300 text-gray-700 dark:text-gray-300'
+                            }`}
+                          >
+                            Exact Size
                           </button>
                         </div>
                       </div>
 
-                      {/* Dimension Inputs */}
+                      {/* Input Fields */}
                       {resizeMode === 'dimensions' && (
                         <div className="grid grid-cols-2 gap-3 mb-3">
                           <div>
@@ -425,6 +445,38 @@ const ImageResizerPage = () => {
                               min="1"
                             />
                           </div>
+                        </div>
+                      )}
+
+                      {resizeMode === 'width' && (
+                        <div className="mb-3">
+                          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                            Width (px) - Height will be calculated automatically
+                          </label>
+                          <input
+                            type="number"
+                            value={width}
+                            onChange={(e) => setWidth(e.target.value)}
+                            className="w-full px-2 py-1 text-sm border border-gray-200 dark:border-gray-600 rounded focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white"
+                            placeholder="Enter width"
+                            min="1"
+                          />
+                        </div>
+                      )}
+
+                      {resizeMode === 'height' && (
+                        <div className="mb-3">
+                          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                            Height (px) - Width will be calculated automatically
+                          </label>
+                          <input
+                            type="number"
+                            value={height}
+                            onChange={(e) => setHeight(e.target.value)}
+                            className="w-full px-2 py-1 text-sm border border-gray-200 dark:border-gray-600 rounded focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white"
+                            placeholder="Enter height"
+                            min="1"
+                          />
                         </div>
                       )}
 

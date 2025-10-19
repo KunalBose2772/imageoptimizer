@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import formidable from 'formidable';
 import fs from 'fs';
 import path from 'path';
-import { spawn } from 'child_process';
+import sharp from 'sharp';
 
 export const config = {
   api: {
@@ -32,76 +32,93 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    // Create temporary file paths
-    const inputPath = file.filepath;
-    const outputDir = path.join(process.cwd(), 'public', 'uploads');
-    const outputFilename = `upscaled_${Date.now()}.png`;
-    const outputPath = path.join(outputDir, outputFilename);
+    console.log('Processing AI upscaling request...');
+    console.log('Upscale factor:', upscaleFactor);
 
-    // Ensure output directory exists
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    // Read the input image
+    const inputBuffer = fs.readFileSync(file.filepath);
+    
+    // Process with Sharp
+    let processedImage;
+    
+    try {
+      // Get original image metadata
+      const image = sharp(inputBuffer);
+      const metadata = await image.metadata();
+      
+      console.log('Original image metadata:', { 
+        width: metadata.width, 
+        height: metadata.height, 
+        format: metadata.format 
+      });
+      
+      // Parse upscale factor
+      const factor = parseInt(upscaleFactor.replace('x', ''));
+      const newWidth = metadata.width * factor;
+      const newHeight = metadata.height * factor;
+      
+      console.log('Target size:', { width: newWidth, height: newHeight });
+      
+      // Upscale using high-quality LANCZOS resampling
+      processedImage = await image
+        .resize(newWidth, newHeight, {
+          kernel: sharp.kernel.lanczos3,
+          withoutEnlargement: false
+        })
+        .sharpen({
+          sigma: 1.0,
+          flat: 1.0,
+          jagged: 2.0
+        })
+        .png({ quality: 95 })
+        .toBuffer();
+      
+      console.log('Image upscaled successfully');
+      
+    } catch (processingError) {
+      console.error('Sharp processing error:', processingError);
+      
+      // Fallback: basic upscaling without enhancement
+      try {
+        const image = sharp(inputBuffer);
+        const metadata = await image.metadata();
+        const factor = parseInt(upscaleFactor.replace('x', ''));
+        const newWidth = metadata.width * factor;
+        const newHeight = metadata.height * factor;
+        
+        processedImage = await image
+          .resize(newWidth, newHeight, {
+            kernel: sharp.kernel.lanczos3
+          })
+          .png({ quality: 90 })
+          .toBuffer();
+        
+        console.log('Image upscaled with fallback method');
+        
+      } catch (fallbackError) {
+        console.error('Fallback upscaling failed:', fallbackError);
+        throw fallbackError;
+      }
     }
 
-    // Run Python script for AI upscaling
-    const pythonScript = path.join(process.cwd(), 'scripts', 'ai_upscale.py');
-    
-    return new Promise((resolve) => {
-      const pythonProcess = spawn('python3', [
-        pythonScript,
-        inputPath,
-        outputPath,
-        upscaleFactor
-      ]);
+    // Set appropriate headers
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Disposition', `attachment; filename="upscaled_${Date.now()}.png"`);
+    res.setHeader('Content-Length', processedImage.length);
 
-      let errorOutput = '';
+    // Send the processed image
+    res.status(200).send(processedImage);
 
-      pythonProcess.stderr.on('data', (data) => {
-        errorOutput += data.toString();
-      });
-
-      pythonProcess.on('close', (code) => {
-        if (code !== 0) {
-          console.error('Python script error:', errorOutput);
-          return res.status(500).json({ 
-            error: 'AI upscaling failed',
-            details: errorOutput 
-          });
+    // Clean up temporary files
+    setTimeout(() => {
+      try {
+        if (fs.existsSync(file.filepath)) {
+          fs.unlinkSync(file.filepath);
         }
-
-        // Check if output file exists
-        if (!fs.existsSync(outputPath)) {
-          return res.status(500).json({ error: 'Output file not created' });
-        }
-
-        // Read the processed image
-        const processedImage = fs.readFileSync(outputPath);
-        
-        // Set appropriate headers
-        res.setHeader('Content-Type', 'image/png');
-        res.setHeader('Content-Disposition', `attachment; filename="${outputFilename}"`);
-        res.setHeader('Content-Length', processedImage.length);
-
-        // Send the processed image
-        res.status(200).send(processedImage);
-
-        // Clean up temporary files
-        setTimeout(() => {
-          try {
-            if (fs.existsSync(inputPath)) {
-              fs.unlinkSync(inputPath);
-            }
-            if (fs.existsSync(outputPath)) {
-              fs.unlinkSync(outputPath);
-            }
-          } catch (cleanupError) {
-            console.error('Cleanup error:', cleanupError);
-          }
-        }, 1000);
-
-        resolve();
-      });
-    });
+      } catch (cleanupError) {
+        console.error('Cleanup error:', cleanupError);
+      }
+    }, 1000);
 
   } catch (error) {
     console.error('AI upscaling error:', error);

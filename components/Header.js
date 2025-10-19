@@ -300,6 +300,22 @@ const Header = () => {
                     <span className="text-sm font-medium text-gray-900 dark:text-white">ICO to PNG</span>
                   </Link>
                   <Link
+                    href="/image-tools/ico-to-jpg"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">ICO to JPG</span>
+                  </Link>
+                  <Link
+                    href="/image-tools/ico-to-webp"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Image className="w-4 h-4 text-primary-500" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">ICO to WebP</span>
+                  </Link>
+                  <Link
                     href="/pdf-tools/merge-pdf"
                     className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
                     onClick={() => setIsMenuOpen(false)}

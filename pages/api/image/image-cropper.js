@@ -14,9 +14,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { file, resizeMode, width, height, percentage, maintainAspectRatio } = req.body;
+    const { file, cropMode, customWidth, customHeight, socialTemplate, maintainAspectRatio } = req.body;
     
-    console.log('API received:', { resizeMode, width, height, percentage, maintainAspectRatio });
+    console.log('API received:', { cropMode, customWidth, customHeight, socialTemplate, maintainAspectRatio });
     
     if (!file) {
       return res.status(400).json({ error: 'No file provided' });
@@ -32,89 +32,161 @@ export default async function handler(req, res) {
     const originalWidth = metadata.width;
     const originalHeight = metadata.height;
 
-    // Calculate new dimensions based on resize mode
-    let newWidth, newHeight;
+    let cropOptions = {};
+    let outputFormat = 'jpeg';
 
-    if (resizeMode === 'dimensions') {
-      newWidth = parseInt(width) || 0;
-      newHeight = parseInt(height) || 0;
+    if (cropMode === 'square') {
+      // Crop to square - use the smaller dimension
+      const size = Math.min(originalWidth, originalHeight);
+      const left = Math.floor((originalWidth - size) / 2);
+      const top = Math.floor((originalHeight - size) / 2);
       
-      if (newWidth <= 0 || newHeight <= 0) {
-        return res.status(400).json({ error: 'Width and height must be positive numbers' });
+      cropOptions = {
+        left: left,
+        top: top,
+        width: size,
+        height: size
+      };
+    } else if (cropMode === 'circle') {
+      // Crop to circle - use the smaller dimension for square, then apply circle mask
+      const size = Math.min(originalWidth, originalHeight);
+      const left = Math.floor((originalWidth - size) / 2);
+      const top = Math.floor((originalHeight - size) / 2);
+      
+      cropOptions = {
+        left: left,
+        top: top,
+        width: size,
+        height: size
+      };
+      outputFormat = 'png'; // Use PNG for transparency
+    } else if (cropMode === 'social') {
+      // Social media templates
+      const templates = {
+        'instagram-square': { width: 1080, height: 1080 },
+        'instagram-story': { width: 1080, height: 1920 },
+        'facebook-cover': { width: 1200, height: 630 },
+        'twitter-header': { width: 1500, height: 500 },
+        'linkedin-banner': { width: 1584, height: 396 },
+        'youtube-thumbnail': { width: 1280, height: 720 },
+        'pinterest-pin': { width: 1000, height: 1500 }
+      };
+      
+      const template = templates[socialTemplate] || templates['instagram-square'];
+      const targetWidth = template.width;
+      const targetHeight = template.height;
+      
+      // Calculate crop area to fit the template
+      const aspectRatio = originalWidth / originalHeight;
+      const targetAspectRatio = targetWidth / targetHeight;
+      
+      let cropWidth, cropHeight;
+      if (aspectRatio > targetAspectRatio) {
+        // Image is wider, crop width
+        cropHeight = originalHeight;
+        cropWidth = Math.round(originalHeight * targetAspectRatio);
+      } else {
+        // Image is taller, crop height
+        cropWidth = originalWidth;
+        cropHeight = Math.round(originalWidth / targetAspectRatio);
       }
       
-      if (maintainAspectRatio === 'true' || maintainAspectRatio === true) {
-        const aspectRatio = originalWidth / originalHeight;
-        if (newWidth && !newHeight) {
-          newHeight = Math.round(newWidth / aspectRatio);
-        } else if (newHeight && !newWidth) {
-          newWidth = Math.round(newHeight * aspectRatio);
-        } else if (newWidth && newHeight) {
-          // Calculate which dimension to prioritize based on aspect ratio
-          const targetAspectRatio = newWidth / newHeight;
-          if (Math.abs(aspectRatio - targetAspectRatio) > 0.01) {
-            // Adjust to maintain original aspect ratio
-            if (aspectRatio > targetAspectRatio) {
-              newHeight = Math.round(newWidth / aspectRatio);
-            } else {
-              newWidth = Math.round(newHeight * aspectRatio);
-            }
-          }
-        }
-      }
-    } else if (resizeMode === 'percentage') {
-      const scale = parseInt(percentage) / 100;
-      if (scale <= 0 || scale > 5) {
-        return res.status(400).json({ error: 'Percentage must be between 1 and 500' });
-      }
-      newWidth = Math.round(originalWidth * scale);
-      newHeight = Math.round(originalHeight * scale);
-    } else if (resizeMode === 'fit') {
-      // Fit to size while maintaining aspect ratio
-      const maxWidth = parseInt(width) || originalWidth;
-      const maxHeight = parseInt(height) || originalHeight;
+      const left = Math.floor((originalWidth - cropWidth) / 2);
+      const top = Math.floor((originalHeight - cropHeight) / 2);
       
-      if (maxWidth <= 0 || maxHeight <= 0) {
-        return res.status(400).json({ error: 'Fit dimensions must be positive numbers' });
+      cropOptions = {
+        left: left,
+        top: top,
+        width: cropWidth,
+        height: cropHeight
+      };
+    } else if (cropMode === 'custom') {
+      // Custom dimensions
+      const targetWidth = parseInt(customWidth);
+      const targetHeight = parseInt(customHeight);
+      
+      if (targetWidth <= 0 || targetHeight <= 0) {
+        return res.status(400).json({ error: 'Invalid custom dimensions' });
       }
+
+      if (targetWidth > originalWidth || targetHeight > originalHeight) {
+        return res.status(400).json({ error: 'Crop dimensions cannot be larger than original image' });
+      }
+
+      // Center the crop
+      const left = Math.floor((originalWidth - targetWidth) / 2);
+      const top = Math.floor((originalHeight - targetHeight) / 2);
       
-      const scaleX = maxWidth / originalWidth;
-      const scaleY = maxHeight / originalHeight;
-      const scale = Math.min(scaleX, scaleY);
+      cropOptions = {
+        left: left,
+        top: top,
+        width: targetWidth,
+        height: targetHeight
+      };
+    } else if (cropMode === 'free') {
+      // Free crop - center crop
+      const size = Math.min(originalWidth, originalHeight);
+      const left = Math.floor((originalWidth - size) / 2);
+      const top = Math.floor((originalHeight - size) / 2);
       
-      newWidth = Math.round(originalWidth * scale);
-      newHeight = Math.round(originalHeight * scale);
+      cropOptions = {
+        left: left,
+        top: top,
+        width: size,
+        height: size
+      };
+    }
+
+    // Validate crop options
+    if (cropOptions.left < 0 || cropOptions.top < 0 || 
+        cropOptions.width <= 0 || cropOptions.height <= 0 ||
+        cropOptions.left + cropOptions.width > originalWidth ||
+        cropOptions.top + cropOptions.height > originalHeight) {
+      return res.status(400).json({ error: 'Invalid crop parameters' });
+    }
+
+    // Apply cropping
+    let processedBuffer;
+    if (cropMode === 'circle') {
+      // Create circular mask
+      const size = cropOptions.width;
+      const mask = Buffer.from(`
+        <svg width="${size}" height="${size}">
+          <defs>
+            <mask id="circle">
+              <rect width="${size}" height="${size}" fill="white"/>
+              <circle cx="${size/2}" cy="${size/2}" r="${size/2}" fill="black"/>
+            </mask>
+          </defs>
+          <rect width="${size}" height="${size}" fill="white" mask="url(#circle)"/>
+        </svg>
+      `);
+      
+      processedBuffer = await sharpInstance
+        .extract(cropOptions)
+        .composite([{ input: mask, blend: 'dest-in' }])
+        .png()
+        .toBuffer();
     } else {
-      return res.status(400).json({ error: 'Invalid resize mode' });
+      // Regular rectangular crop
+      processedBuffer = await sharpInstance
+        .extract(cropOptions)
+        .jpeg({ quality: 90 })
+        .toBuffer();
     }
-
-    // Validate dimensions
-    if (newWidth <= 0 || newHeight <= 0) {
-      return res.status(400).json({ error: 'Invalid dimensions' });
-    }
-
-    if (newWidth > 10000 || newHeight > 10000) {
-      return res.status(400).json({ error: 'Dimensions too large (max 10000px)' });
-    }
-
-    // Apply resizing
-    const processedBuffer = await sharpInstance
-      .resize(newWidth, newHeight, {
-        fit: 'fill',
-        kernel: sharp.kernel.lanczos3
-      })
-      .jpeg({ quality: 90 })
-      .toBuffer();
 
     // Set response headers
-    res.setHeader('Content-Type', 'image/jpeg');
-    res.setHeader('Content-Disposition', 'attachment; filename="resized.jpg"');
+    const contentType = outputFormat === 'png' ? 'image/png' : 'image/jpeg';
+    const filename = outputFormat === 'png' ? 'cropped.png' : 'cropped.jpg';
+    
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('X-Original-Size', `${originalWidth}x${originalHeight}`);
-    res.setHeader('X-New-Size', `${newWidth}x${newHeight}`);
+    res.setHeader('X-Cropped-Size', `${cropOptions.width}x${cropOptions.height}`);
     
     res.send(processedBuffer);
   } catch (error) {
-    console.error('Resize error:', error);
-    res.status(500).json({ error: 'Resize failed' });
+    console.error('Crop error:', error);
+    res.status(500).json({ error: 'Crop failed' });
   }
 }

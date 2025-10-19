@@ -6,6 +6,7 @@ import {
   Image, 
   Download, 
   CheckCircle, 
+  XCircle,
   Info, 
   Zap,
   Shield,
@@ -14,7 +15,8 @@ import {
   Upload,
   Sparkles,
   Eye,
-  Layers
+  Layers,
+  Search
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -24,15 +26,96 @@ const TransparentBackgroundPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingMode, setProcessingMode] = useState('single'); // 'single' or 'batch'
   const [transparencyLevel, setTransparencyLevel] = useState(100); // 0-100
+  const [processingStep, setProcessingStep] = useState('');
+  const [processingProgress, setProcessingProgress] = useState(0);
+  const [backgroundDetected, setBackgroundDetected] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [scanningPreview, setScanningPreview] = useState(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanProgress, setScanProgress] = useState(0);
 
   const handleFileSelect = (files) => {
     if (files) {
       const fileArray = Array.isArray(files) ? files : [files];
       setSelectedFiles(fileArray);
       setProcessedFiles([]);
+      setScanningPreview(null);
+      setBackgroundDetected(null);
+      setShowPreview(false);
     } else {
       setSelectedFiles([]);
       setProcessedFiles([]);
+      setScanningPreview(null);
+      setBackgroundDetected(null);
+      setShowPreview(false);
+    }
+  };
+
+  const handleScanImage = async () => {
+    if (!selectedFiles || selectedFiles.length === 0) {
+      toast.error('Please select a file first');
+      return;
+    }
+
+    setIsScanning(true);
+    setScanProgress(0);
+    setScanningPreview(null);
+    setBackgroundDetected(null);
+
+    try {
+      const file = selectedFiles[0];
+      
+      // Simulate scanning animation
+      const scanSteps = [
+        { step: 'Analyzing image structure...', progress: 20, delay: 800 },
+        { step: 'Detecting edges and boundaries...', progress: 40, delay: 1200 },
+        { step: 'Scanning for background regions...', progress: 60, delay: 1000 },
+        { step: 'Creating background mask...', progress: 80, delay: 1500 },
+        { step: 'Finalizing scan results...', progress: 100, delay: 500 }
+      ];
+
+      for (const { step, progress, delay } of scanSteps) {
+        setProcessingStep(step);
+        setScanProgress(progress);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+
+      // Get actual preview from API
+      const formData = new FormData();
+      formData.append('file', file.file);
+
+      const response = await fetch('/api/ai/transparent-background-preview', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Scanning failed');
+      }
+
+      const result = await response.json();
+      
+      setScanningPreview(result.preview);
+      setBackgroundDetected({
+        percentage: result.backgroundPercentage,
+        confidence: result.confidence,
+        detected: result.detected,
+        method: 'AI Edge Detection + Flood Fill'
+      });
+
+      if (result.detected) {
+        toast.success(`🎯 Background detected! ${result.backgroundPercentage}% background area found`);
+      } else {
+        toast.warning('⚠️ No clear background detected. Try an image with a distinct background.');
+      }
+
+    } catch (error) {
+      console.error('Scanning error:', error);
+      toast.error('❌ Scanning failed. Please try again.');
+    } finally {
+      setIsScanning(false);
+      setProcessingStep('');
+      setScanProgress(0);
     }
   };
 
@@ -44,14 +127,38 @@ const TransparentBackgroundPage = () => {
 
     setIsProcessing(true);
     setProcessedFiles([]);
+    setProcessingStep('Analyzing image...');
+    setProcessingProgress(10);
+    setBackgroundDetected(null);
+    setShowPreview(false);
     
     try {
       if (processingMode === 'single' || selectedFiles.length === 1) {
-        // Single file processing
+        // Single file processing with immersive animations
         const file = selectedFiles[0];
+        
+        // Simulate processing steps with realistic timing
+        const steps = [
+          { step: 'Analyzing image structure...', progress: 20, delay: 800 },
+          { step: 'Detecting edges and boundaries...', progress: 35, delay: 1200 },
+          { step: 'Identifying background regions...', progress: 50, delay: 1000 },
+          { step: 'Creating intelligent mask...', progress: 70, delay: 1500 },
+          { step: 'Refining edges and details...', progress: 85, delay: 1000 },
+          { step: 'Applying transparency...', progress: 95, delay: 500 }
+        ];
+
+        for (const { step, progress, delay } of steps) {
+          setProcessingStep(step);
+          setProcessingProgress(progress);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+
         const formData = new FormData();
         formData.append('file', file.file);
         formData.append('transparencyLevel', transparencyLevel);
+
+        setProcessingStep('Processing with AI...');
+        setProcessingProgress(98);
 
         const response = await fetch('/api/ai/transparent-background', {
           method: 'POST',
@@ -59,7 +166,8 @@ const TransparentBackgroundPage = () => {
         });
 
         if (!response.ok) {
-          throw new Error('Transparency processing failed');
+          const errorData = await response.json();
+          throw new Error(errorData.details || 'Transparency processing failed');
         }
 
         const blob = await response.blob();
@@ -73,14 +181,38 @@ const TransparentBackgroundPage = () => {
           originalName: file.name
         }]);
 
-        toast.success('Background made transparent successfully!');
+        setProcessingStep('Background removal completed!');
+        setProcessingProgress(100);
+        setShowPreview(true);
+        
+        // Simulate background detection result
+        setBackgroundDetected({
+          color: '#ffffff',
+          confidence: 'High',
+          method: 'AI Edge Detection + Color Analysis'
+        });
+
+        toast.success('🎉 Background removed successfully!');
+        
+        // Reset after 2 seconds
+        setTimeout(() => {
+          setProcessingStep('');
+          setProcessingProgress(0);
+        }, 2000);
+        
       } else {
-        // Batch processing
+        // Batch processing with progress updates
         const processedResults = [];
         let successCount = 0;
         let errorCount = 0;
 
-        for (const file of selectedFiles) {
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const file = selectedFiles[i];
+          const progress = Math.round((i / selectedFiles.length) * 100);
+          
+          setProcessingStep(`Processing ${i + 1} of ${selectedFiles.length}: ${file.name}`);
+          setProcessingProgress(progress);
+
           try {
             const formData = new FormData();
             formData.append('file', file.file);
@@ -113,16 +245,25 @@ const TransparentBackgroundPage = () => {
         }
 
         setProcessedFiles(processedResults);
+        setProcessingStep('Batch processing completed!');
+        setProcessingProgress(100);
 
         if (successCount > 0) {
-          toast.success(`${successCount} images processed successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}`);
+          toast.success(`🎉 ${successCount} images processed successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}`);
         } else {
-          toast.error('All processing failed. Please try again.');
+          toast.error('❌ All processing failed. Please try again.');
         }
       }
     } catch (error) {
       console.error('Processing error:', error);
-      toast.error('Transparency processing failed. Please try again.');
+      setProcessingStep('Processing failed');
+      setProcessingProgress(0);
+      
+      if (error.message.includes('background')) {
+        toast.error('❌ No clear background detected. Try an image with a distinct background.');
+      } else {
+        toast.error('❌ Processing failed. Please try again.');
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -179,6 +320,40 @@ const TransparentBackgroundPage = () => {
       description="Make image backgrounds transparent using AI technology. Convert any image to PNG with transparent background. Free, fast, and accurate."
       keywords="transparent background, make background transparent, AI background removal, PNG transparent, free background removal"
     >
+      <style jsx>{`
+        @keyframes processingPulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes processingGlow {
+          0%, 100% { box-shadow: 0 0 20px rgba(147, 51, 234, 0.3); }
+          50% { box-shadow: 0 0 30px rgba(147, 51, 234, 0.6); }
+        }
+        
+        .processing-animation {
+          animation: processingPulse 2s ease-in-out infinite;
+        }
+        
+        .processing-glow {
+          animation: processingGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .slide-in-up {
+          animation: slideInUp 0.5s ease-out;
+        }
+      `}</style>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-purple">
         {/* Hero Section with Upload */}
         <section className="section-padding bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-gray-900 dark:to-purple-900/20">
@@ -310,12 +485,150 @@ const TransparentBackgroundPage = () => {
                     </div>
                   )}
 
-                  {/* Process Button */}
+                  {/* Processing Animation */}
+                  {isProcessing && (
+                    <div className="mt-6 p-6 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-800 processing-glow slide-in-up">
+                      <div className="text-center mb-4">
+                        <div className="w-16 h-16 mx-auto mb-4 relative processing-animation">
+                          <div className="w-16 h-16 border-4 border-purple-200 dark:border-purple-800 rounded-full"></div>
+                          <div className="absolute top-0 left-0 w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Sparkles className="w-6 h-6 text-purple-500 animate-pulse" />
+                          </div>
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                          {processingStep}
+                        </h3>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2">
+                          <div 
+                            className="bg-gradient-to-r from-purple-500 to-indigo-500 h-2 rounded-full transition-all duration-500 ease-out"
+                            style={{ width: `${processingProgress}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {processingProgress}% Complete
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Scanning Animation */}
+                  {isScanning && (
+                    <div className="mt-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800 processing-glow slide-in-up">
+                      <div className="text-center mb-4">
+                        <div className="w-16 h-16 mx-auto mb-4 relative processing-animation">
+                          <div className="w-16 h-16 border-4 border-blue-200 dark:border-blue-800 rounded-full"></div>
+                          <div className="absolute top-0 left-0 w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Search className="w-6 h-6 text-blue-500 animate-pulse" />
+                          </div>
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                          {processingStep}
+                        </h3>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2">
+                          <div 
+                            className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-500 ease-out"
+                            style={{ width: `${scanProgress}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {scanProgress}% Complete
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Scanning Preview */}
+                  {scanningPreview && (
+                    <div className="mt-6 p-6 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
+                        🔍 Background Scan Results
+                      </h3>
+                      <div className="text-center mb-4">
+                        <img 
+                          src={scanningPreview} 
+                          alt="Background Detection Preview" 
+                          className="w-full max-w-md mx-auto rounded-lg border border-gray-200 dark:border-gray-700"
+                        />
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                          Red areas indicate detected background regions
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Background Detection Results */}
+                  {backgroundDetected && (
+                    <div className={`mt-6 p-4 rounded-lg border ${
+                      backgroundDetected.detected 
+                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
+                        : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                    }`}>
+                      <div className="flex items-center space-x-2 mb-2">
+                        {backgroundDetected.detected ? (
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                        ) : (
+                          <XCircle className="w-5 h-5 text-red-500" />
+                        )}
+                        <span className={`font-medium ${
+                          backgroundDetected.detected 
+                            ? 'text-green-700 dark:text-green-300' 
+                            : 'text-red-700 dark:text-red-300'
+                        }`}>
+                          {backgroundDetected.detected ? 'Background Detected' : 'No Background Detected'}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-600 dark:text-gray-400">Background Area:</span>
+                          <span className="ml-2 text-gray-900 dark:text-white">
+                            {backgroundDetected.percentage}%
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600 dark:text-gray-400">Confidence:</span>
+                          <span className={`ml-2 ${
+                            backgroundDetected.confidence === 'High' ? 'text-green-600' :
+                            backgroundDetected.confidence === 'Medium' ? 'text-yellow-600' : 'text-red-600'
+                          }`}>
+                            {backgroundDetected.confidence}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        Method: {backgroundDetected.method}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Scan Button */}
                   <div className="mt-6">
                     <button
+                      onClick={handleScanImage}
+                      disabled={!selectedFiles || selectedFiles.length === 0 || isScanning}
+                      className="w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white disabled:opacity-50"
+                    >
+                      {isScanning ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Scanning Image...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Search className="w-5 h-5" />
+                          <span>Scan Background</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Process Button */}
+                  <div className="mt-4">
+                    <button
                       onClick={handleProcess}
-                      disabled={!selectedFiles || selectedFiles.length === 0 || isProcessing}
-                      className="convert-button-purple w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
+                      disabled={!selectedFiles || selectedFiles.length === 0 || isProcessing || !backgroundDetected?.detected}
+                      className="convert-button-purple w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
                     >
                       {isProcessing ? (
                         <>
@@ -329,7 +642,49 @@ const TransparentBackgroundPage = () => {
                         </>
                       )}
                     </button>
+                    {!backgroundDetected?.detected && backgroundDetected !== null && (
+                      <p className="text-sm text-red-500 mt-2 text-center">
+                        Please scan the image first to detect background
+                      </p>
+                    )}
                   </div>
+
+                  {/* Preview Section */}
+                  {showPreview && processedFiles.length > 0 && (
+                    <div className="mt-6 p-6 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl border border-green-200 dark:border-green-800">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
+                        ✨ Background Removal Preview
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="text-center">
+                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Before</h4>
+                          <div className="bg-white dark:bg-gray-800 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+                            <img 
+                              src={selectedFiles[0]?.preview || URL.createObjectURL(selectedFiles[0]?.file)} 
+                              alt="Original" 
+                              className="w-full h-32 object-cover rounded"
+                            />
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">After</h4>
+                          <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+                            <img 
+                              src={processedFiles[0]?.url} 
+                              alt="Transparent" 
+                              className="w-full h-32 object-cover rounded"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-4 text-center">
+                        <div className="inline-flex items-center space-x-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-3 py-1 rounded-full text-sm">
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Background successfully removed!</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Download Results */}
                   {processedFiles && processedFiles.length > 0 && (

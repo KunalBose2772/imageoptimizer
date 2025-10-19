@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const IcoToJpgPage = () => {
+const IcoToWebpPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [convertedFiles, setConvertedFiles] = useState([]);
   const [isConverting, setIsConverting] = useState(false);
@@ -51,7 +51,7 @@ const IcoToJpgPage = () => {
         formData.append('file', file.file);
         formData.append('quality', quality);
 
-        const response = await fetch('/api/image/ico-to-jpg', {
+        const response = await fetch('/api/image/ico-to-webp', {
           method: 'POST',
           body: formData,
         });
@@ -62,7 +62,7 @@ const IcoToJpgPage = () => {
 
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
-        const filename = file.name.replace(/\.(ico)$/i, '.jpg');
+        const filename = file.name.replace(/\.(ico)$/i, '.webp');
         
         setConvertedFiles([{
           url,
@@ -84,7 +84,7 @@ const IcoToJpgPage = () => {
             formData.append('file', file.file);
             formData.append('quality', quality);
 
-            const response = await fetch('/api/image/ico-to-jpg', {
+            const response = await fetch('/api/image/ico-to-webp', {
               method: 'POST',
               body: formData,
             });
@@ -92,7 +92,7 @@ const IcoToJpgPage = () => {
             if (response.ok) {
               const blob = await response.blob();
               const url = URL.createObjectURL(blob);
-              const filename = file.name.replace(/\.(ico)$/i, '.jpg');
+              const filename = file.name.replace(/\.(ico)$/i, '.webp');
               
               convertedResults.push({
                 url,
@@ -178,11 +178,11 @@ const IcoToJpgPage = () => {
 
   return (
     <Layout 
-      title="Convert ICO to JPG Online for Free"
-      description="Convert ICO files to JPG format instantly. High-quality conversion with customizable quality settings. Free, fast, and secure."
-      keywords="ICO to JPG, convert ICO, ICO converter, image converter, free converter"
+      title="Convert ICO to WebP Online for Free"
+      description="Convert ICO files to WebP format instantly. High-quality conversion with customizable quality settings. Free, fast, and secure."
+      keywords="ICO to WebP, convert ICO, ICO converter, image converter, free converter"
     >
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-emerald">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 page-theme-lime">
         {/* Hero Section with Upload */}
         <section className="section-padding bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
           <div className="container-custom">
@@ -190,21 +190,21 @@ const IcoToJpgPage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                 {/* Left Side - Content */}
                 <div className="text-center lg:text-left">
-                  <div className="inline-flex items-center space-x-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                  <div className="inline-flex items-center space-x-2 bg-lime-100 dark:bg-lime-900/30 text-lime-700 dark:text-lime-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
                     <Image className="w-4 h-4" />
                     <span>Image Conversion Tool</span>
                   </div>
                   
                   <h1 className="heading-1 mb-6">
                     Convert{' '}
-                    <span className="bg-gradient-to-r from-emerald-500 to-emerald-600 bg-clip-text text-transparent">
-                      ICO to JPG
+                    <span className="bg-gradient-to-r from-lime-500 to-lime-600 bg-clip-text text-transparent">
+                      ICO to WebP
                     </span>
                     {' '}Online for Free
                   </h1>
                   
                   <p className="text-large mb-8">
-                    Transform your ICO files to universal JPG format instantly. 
+                    Transform your ICO files to modern WebP format instantly. 
                     High-quality conversion with customizable quality settings. 
                     No registration required, completely free.
                   </p>
@@ -292,7 +292,7 @@ const IcoToJpgPage = () => {
                   {selectedFiles && selectedFiles.length > 0 && (
                     <div className="mt-6">
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        JPEG Quality: {quality}%
+                        WebP Quality: {quality}%
                       </label>
                       <input
                         type="range"
@@ -314,7 +314,7 @@ const IcoToJpgPage = () => {
                     <button
                       onClick={handleConvert}
                       disabled={!selectedFiles || selectedFiles.length === 0 || isConverting}
-                      className="convert-button-emerald w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
+                      className="convert-button-lime w-full py-3 px-6 rounded-xl font-semibold disabled:cursor-not-allowed flex items-center justify-center space-x-2 hover:opacity-90 transition-opacity"
                     >
                       {isConverting ? (
                         <>
@@ -324,7 +324,7 @@ const IcoToJpgPage = () => {
                       ) : (
                         <>
                           <Download className="w-5 h-5" />
-                          <span>Convert to JPG</span>
+                          <span>Convert to WebP</span>
                         </>
                       )}
                     </button>
@@ -384,9 +384,9 @@ const IcoToJpgPage = () => {
           <div className="container-custom">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="heading-2 mb-4">Why Choose Our ICO to JPG Converter?</h2>
+                <h2 className="heading-2 mb-4">Why Choose Our ICO to WebP Converter?</h2>
                 <p className="text-large">
-                  Experience the best ICO to JPG conversion with our advanced features.
+                  Experience the best ICO to WebP conversion with our advanced features.
                 </p>
               </div>
               
@@ -439,38 +439,38 @@ const IcoToJpgPage = () => {
         <section className="section-padding bg-gray-50 dark:bg-gray-900">
           <div className="container-custom">
             <div className="max-w-7xl mx-auto prose prose-lg dark:prose-invert">
-              <h2 className="heading-2 mb-6">Complete Guide to Converting ICO to JPG</h2>
+              <h2 className="heading-2 mb-6">Complete Guide to Converting ICO to WebP</h2>
               
               <p className="text-body mb-6">
                 ICO (Icon) files are Windows icon format commonly used for application icons and favicons. 
                 However, ICO files have limited browser support and are not ideal for modern web use, 
-                making JPG conversion essential for broader compatibility and better quality.
+                making WebP conversion essential for broader compatibility and better quality.
               </p>
 
               <h3 className="heading-3 mb-4">What is ICO Format?</h3>
               <p className="text-body mb-6">
                 ICO is a Windows icon format that can contain multiple images of different sizes (16x16, 32x32, 48x48, etc.) 
                 in a single file. It's primarily used for application icons and favicons. However, ICO files have limited 
-                browser support and are not ideal for modern web use, making JPG conversion necessary for universal compatibility.
+                browser support and are not ideal for modern web use, making WebP conversion necessary for universal compatibility.
               </p>
 
-              <h3 className="heading-3 mb-4">Why Convert ICO to JPG?</h3>
+              <h3 className="heading-3 mb-4">Why Convert ICO to WebP?</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
-                <li><strong>Universal Compatibility:</strong> JPG is supported by all devices and browsers</li>
-                <li><strong>Wide Application Support:</strong> Works with all image editing software</li>
-                <li><strong>Social Media Ready:</strong> Most platforms prefer JPG format</li>
-                <li><strong>Better Quality:</strong> JPG provides superior image quality compared to ICO</li>
+                <li><strong>Modern Format:</strong> WebP is the future of web images with superior compression</li>
+                <li><strong>Better Compression:</strong> 25-35% smaller file sizes than JPG</li>
+                <li><strong>Transparency Support:</strong> Unlike JPG, WebP supports transparency</li>
+                <li><strong>Browser Support:</strong> Supported by all modern browsers and devices</li>
               </ul>
 
-              <h3 className="heading-3 mb-4">How Our ICO to JPG Converter Works</h3>
+              <h3 className="heading-3 mb-4">How Our ICO to WebP Converter Works</h3>
               <p className="text-body mb-6">
                 Our converter uses advanced Sharp library to ensure high-quality conversion. 
-                The process involves decoding the ICO file and encoding to JPG format while preserving 
+                The process involves decoding the ICO file and encoding to WebP format while preserving 
                 maximum visual fidelity. You can convert single files or 
                 batch process up to 20 ICO files simultaneously for maximum efficiency.
               </p>
 
-              <h3 className="heading-3 mb-4">Quality Settings Explained</h3>
+              <h3 className="heading-3 mb-4">WebP Quality Settings Explained</h3>
               <p className="text-body mb-6">
                 Our tool offers customizable quality settings from 10% to 100%:
               </p>
@@ -481,12 +481,12 @@ const IcoToJpgPage = () => {
                 <li><strong>10-49%:</strong> High compression, smallest files</li>
               </ul>
 
-              <h3 className="heading-3 mb-4">Best Practices</h3>
+              <h3 className="heading-3 mb-4">Best Practices for WebP</h3>
               <ul className="list-disc pl-6 mb-6 text-body">
                 <li>Use 85-95% quality for professional images</li>
                 <li>Use 70-80% quality for web images</li>
                 <li>Use 50-70% quality for thumbnails and previews</li>
-                <li>Always preview before finalizing</li>
+                <li>WebP offers better compression than JPG at same quality</li>
               </ul>
             </div>
           </div>
@@ -500,9 +500,9 @@ const IcoToJpgPage = () => {
               
               <div className="space-y-6">
                 <div className="card p-6">
-                  <h3 className="heading-4 mb-3">Is ICO to JPG conversion free?</h3>
+                  <h3 className="heading-4 mb-3">Is ICO to WebP conversion free?</h3>
                   <p className="text-body">
-                    Yes, our ICO to JPG converter is completely free to use with no hidden costs, 
+                    Yes, our ICO to WebP converter is completely free to use with no hidden costs, 
                     watermarks, or limitations. You can convert unlimited files without registration.
                   </p>
                 </div>
@@ -518,7 +518,7 @@ const IcoToJpgPage = () => {
                 <div className="card p-6">
                   <h3 className="heading-4 mb-3">How long does conversion take?</h3>
                   <p className="text-body">
-                    Most ICO to JPG conversions complete in under 3 seconds. Processing time 
+                    Most ICO to WebP conversions complete in under 3 seconds. Processing time 
                     depends on file size and current server load.
                   </p>
                 </div>
@@ -556,5 +556,5 @@ const IcoToJpgPage = () => {
   );
 };
 
-export default IcoToJpgPage;
+export default IcoToWebpPage;
 
